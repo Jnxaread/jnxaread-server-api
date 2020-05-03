@@ -3,6 +3,7 @@ package com.jnxaread.controller;
 import cn.hutool.core.date.DateUtil;
 import com.jnxaread.bean.Login;
 import com.jnxaread.bean.User;
+import com.jnxaread.bean.model.UserModel;
 import com.jnxaread.bean.wrap.WrapUser;
 import com.jnxaread.entity.UnifiedResult;
 import com.jnxaread.service.LoginService;
@@ -50,6 +51,46 @@ public class UserController {
      * 否则不允许发送验证码
      */
     private Map<String, Date> emailMap = new HashMap<>();
+
+    public UnifiedResult signIn(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+
+        //先判断用户是否已经登录
+        if (session.getAttribute("user") != null) {
+            return UnifiedResult.build(400, "用户已登录", null);
+        }
+
+        String account = request.getParameter("account");
+        String password = request.getParameter("password");
+
+        User user = userService.getUserByAccount(account);
+        if (user == null || !user.getPassword().equals(password)) {
+            return UnifiedResult.build(400, "账号或密码错误", null);
+        }
+
+        session.setAttribute("user", user);
+
+        // 用户登录次数+1
+        user.setLoginCount(user.getLoginCount() + 1);
+        userService.updateUser(user);
+
+        //记录用户登录ip、时间
+        Login newLogin = new Login();
+        newLogin.setIP(request.getRemoteAddr());
+        newLogin.setUserId(user.getId());
+        newLogin.setCreateTime(new Date());
+        //记录用户登录终端
+        String terminal = request.getParameter("terminal");
+        newLogin.setTerminal(terminal);
+        newLogin.setSystem(0);
+
+        loginService.addLogin(newLogin);
+
+        UserModel userModel = new UserModel();
+        userModel.setUsername(user.getUsername());
+
+        return UnifiedResult.ok(userModel);
+    }
 
     @PostMapping("/signUp")
     public UnifiedResult signUp(HttpServletRequest request, WrapUser newUser) {
@@ -108,22 +149,11 @@ public class UserController {
         newUser.setCreateTime(new Date());
         User user = userService.addUser(newUser);
 
-        //用户登录
-        request.getSession().setAttribute("user", user);
+        request.setAttribute("username",user.getUsername());
+        request.setAttribute("password",user.getPassword());
+        UnifiedResult unifiedResult = signIn(request);
 
-        //记录用户登录ip、时间
-        Login newLogin = new Login();
-        newLogin.setIP(request.getRemoteAddr());
-        newLogin.setUserId(user.getId());
-        newLogin.setCreateTime(new Date());
-
-        String terminal = request.getParameter("terminal");
-        newLogin.setTerminal(terminal);
-        newLogin.setSystem(0);
-
-        loginService.addLogin(newLogin);
-
-        return UnifiedResult.ok(user);
+        return unifiedResult;
     }
 
     @PostMapping("/emailCode")
