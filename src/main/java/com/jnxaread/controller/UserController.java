@@ -4,9 +4,8 @@ import cn.hutool.core.date.DateUtil;
 import com.jnxaread.bean.Login;
 import com.jnxaread.bean.User;
 import com.jnxaread.bean.model.UserModel;
-import com.jnxaread.bean.wrap.WrapUser;
+import com.jnxaread.bean.wrap.UserWrap;
 import com.jnxaread.entity.UnifiedResult;
-import com.jnxaread.service.LoginService;
 import com.jnxaread.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,9 +34,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private LoginService loginService;
 
     @Autowired(required = false)
     private JavaMailSender javaMailSender;
@@ -91,7 +87,7 @@ public class UserController {
         newLogin.setTerminal(terminal);
         newLogin.setSystem(0);
 
-        loginService.addLogin(newLogin);
+        userService.addLogin(newLogin);
 
         UserModel userModel = new UserModel();
         userModel.setUsername(user.getUsername());
@@ -107,7 +103,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/signUp")
-    public UnifiedResult signUp(HttpServletRequest request, WrapUser newUser) {
+    public UnifiedResult signUp(HttpServletRequest request, UserWrap newUser) {
         String regAccount = "^[a-zA-Z]([-_a-zA-Z0-9]{8,19})$";
         String regUsername = "^[a-zA-Z0-9_\\u4e00-\\u9fa5]{2,12}$";
         String regEmail = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
