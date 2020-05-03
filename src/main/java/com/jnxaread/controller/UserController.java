@@ -52,6 +52,13 @@ public class UserController {
      */
     private Map<String, Date> emailMap = new HashMap<>();
 
+    /**
+     * 用户登录接口
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("/signIn")
     public UnifiedResult signIn(HttpServletRequest request) {
         HttpSession session = request.getSession();
 
@@ -92,6 +99,13 @@ public class UserController {
         return UnifiedResult.ok(userModel);
     }
 
+    /**
+     * 用户注册接口
+     *
+     * @param request
+     * @param newUser
+     * @return
+     */
     @PostMapping("/signUp")
     public UnifiedResult signUp(HttpServletRequest request, WrapUser newUser) {
         String regAccount = "^[a-zA-Z]([-_a-zA-Z0-9]{8,19})$";
@@ -149,13 +163,21 @@ public class UserController {
         newUser.setCreateTime(new Date());
         User user = userService.addUser(newUser);
 
-        request.setAttribute("username",user.getUsername());
-        request.setAttribute("password",user.getPassword());
+        //注册完成后自动登录
+        request.setAttribute("username", user.getUsername());
+        request.setAttribute("password", user.getPassword());
         UnifiedResult unifiedResult = signIn(request);
 
         return unifiedResult;
     }
 
+    /**
+     * 生成6位邮件验证码
+     *
+     * @param session
+     * @param email
+     * @return
+     */
     @PostMapping("/emailCode")
     public UnifiedResult getEmailCode(HttpSession session, String email) {
         Date date = emailMap.get(email);
