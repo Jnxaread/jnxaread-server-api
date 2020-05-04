@@ -4,8 +4,10 @@ import com.jnxaread.bean.Topic;
 import com.jnxaread.bean.User;
 import com.jnxaread.bean.model.ReplyModel;
 import com.jnxaread.bean.model.TopicModel;
+import com.jnxaread.bean.wrap.ReplyWrap;
+import com.jnxaread.bean.wrap.TopicWrap;
 import com.jnxaread.entity.UnifiedResult;
-import com.jnxaread.service.BaseForumService;
+import com.jnxaread.service.ForumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +30,7 @@ import java.util.regex.Pattern;
 public class ForumController {
 
     @Autowired
-    private BaseForumService forumService;
+    private ForumService forumService;
 
     /**
      * 发帖
@@ -89,28 +91,28 @@ public class ForumController {
      * @param id
      * @return
      */
-    @RequestMapping("/topic")
+    @PostMapping("/topic")
     @ResponseBody
-    public UnifiedResult getTopicDetail(Integer id, Integer page) {
+    public UnifiedResult getTopic(Integer id, Integer page) {
         if (id == null || page == null) {
             return UnifiedResult.build(400, "参数错误", null);
         }
         Map<String, Object> topicMap = new HashMap<>();
 
-        TopicModel topicModel = forumService.getTopicModel(id);
-        if (topicModel == null) {
+        TopicWrap wrapTopic = forumService.getTopicWrap(id);
+        if (wrapTopic == null) {
             return UnifiedResult.build(400, "帖子不存在", null);
         }
 
-//        TopicModel topicModel = getTopicModel(wrapTopic);
+        TopicModel topicModel = getTopicModel(wrapTopic);
 
-        List<ReplyModel> replyModelList = forumService.getReplyModelList(id, page);
+        List<ReplyWrap> wrapReplyList = forumService.getReplyWrapList(id, page);
 
-//        ArrayList<ReplyModel> replyModelList = new ArrayList<>();
-//        wrapReplyList.forEach(wrapReply -> {
-//            ReplyModel replyModel = getReplyModel(wrapReply);
-//            replyModelList.add(replyModel);
-//        });
+        ArrayList<ReplyModel> replyModelList = new ArrayList<>();
+        wrapReplyList.forEach(wrapReply -> {
+            ReplyModel replyModel = getReplyModel(wrapReply);
+            replyModelList.add(replyModel);
+        });
 
         long replyCount = forumService.getReplyCountByTopicId(id);
 
@@ -118,6 +120,49 @@ public class ForumController {
         topicMap.put("replyList", replyModelList);
         topicMap.put("replyCount", replyCount);
         return UnifiedResult.ok(topicMap);
+    }
+
+    /**
+     * 将TopicWrap封装到TopicModel
+     *
+     * @param wrapTopic
+     * @return
+     */
+    public TopicModel getTopicModel(TopicWrap wrapTopic) {
+        TopicModel topicModel = new TopicModel();
+        topicModel.setId(wrapTopic.getId());
+        topicModel.setLabel(wrapTopic.getLabel());
+        topicModel.setTitle(wrapTopic.getTitle());
+        if (wrapTopic.getContent() != null) {
+            topicModel.setContent(wrapTopic.getContent());
+        }
+        topicModel.setUsername(wrapTopic.getUsername());
+        topicModel.setCreateTime(wrapTopic.getCreateTime());
+        if (wrapTopic.getLastReply() != null) {
+            topicModel.setLastReply(wrapTopic.getLastReply());
+        }
+        if (wrapTopic.getLastSubmit() != null) {
+            topicModel.setLastSubmit(wrapTopic.getLastSubmit());
+        }
+        topicModel.setReplyCount(wrapTopic.getReplyCount());
+        topicModel.setViewCount(wrapTopic.getViewCount());
+        return topicModel;
+    }
+
+    /**
+     * 将ReplyWrap封装到ReplyModel
+     *
+     * @param wrapReply
+     * @return
+     */
+    public ReplyModel getReplyModel(ReplyWrap wrapReply) {
+        ReplyModel replyModel = new ReplyModel();
+        replyModel.setUsername(wrapReply.getUsername());
+        replyModel.setCreateTime(wrapReply.getCreateTime());
+        replyModel.setFloor(wrapReply.getFloor());
+        replyModel.setQuote(wrapReply.getQuote());
+        replyModel.setContent(wrapReply.getContent());
+        return replyModel;
     }
 
 }
