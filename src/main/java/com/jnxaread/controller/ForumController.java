@@ -1,5 +1,6 @@
 package com.jnxaread.controller;
 
+import com.jnxaread.bean.Reply;
 import com.jnxaread.bean.Topic;
 import com.jnxaread.bean.User;
 import com.jnxaread.bean.model.ReplyModel;
@@ -40,7 +41,6 @@ public class ForumController {
      * @return
      */
     @PostMapping("/new/topic")
-    @ResponseBody
     public UnifiedResult submitTopic(HttpSession session, Topic newTopic) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
@@ -86,13 +86,63 @@ public class ForumController {
     }
 
     /**
+     * 回复
+     *
+     * @param session
+     * @param newReply
+     * @return
+     */
+    @PostMapping("/new/reply")
+    public UnifiedResult submitReply(HttpSession session, Reply newReply) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return UnifiedResult.build(400, "请登录后再回复！", null);
+        }
+        if (user.getLocked()) {
+            return UnifiedResult.build(400, "您已被封禁，无法回复", null);
+        }
+
+        //对回复内容进行校验，替换富文本编辑器自动添加的html字符为空字符串
+        //如果替换后的内容长度为0，则返回错误信息
+        String validate = newReply.getContent();
+        String validateA = validate.replaceAll(" ", "");
+        String validateB = validateA.replaceAll("<p>", "");
+        String validateC = validateB.replaceAll("</p>", "");
+        String validateD = validateC.replaceAll("&nbsp;", "");
+        String validateE = validateD.replaceAll("<br>", "");
+        if (validateE.length() == 0) {
+            return UnifiedResult.build(400, "回复内容不能为空！", null);
+        }
+
+        //对回复内容长度进行校验，如果内容长度超过11264，则返回错误信息
+        if (newReply.getContent().length() > 11264) {
+            return UnifiedResult.build(400, "回复的长度不得超过11000个字符", null);
+        }
+
+        //设置回复作者id
+        newReply.setUserId(user.getId());
+        //设置发布时间
+        newReply.setCreateTime(new Date());
+        //将回复写入数据库
+        int result = forumService.addReply(newReply);
+        if (result == 0) {
+            return UnifiedResult.ok();
+        } else if (result == 1) {
+            return UnifiedResult.build(400, "帖子不存在", null);
+        } else if (result == 2) {
+            return UnifiedResult.build(400, "帖子已被锁定，无法回复", null);
+        } else {
+            return UnifiedResult.build(400, "引用的回复不存在", null);
+        }
+    }
+
+    /**
      * 获取帖子详情
      *
      * @param id
      * @return
      */
-    @PostMapping("/topic")
-    @ResponseBody
+    @PostMapping("/detail/topic")
     public UnifiedResult getTopic(Integer id, Integer page) {
         if (id == null || page == null) {
             return UnifiedResult.build(400, "参数错误", null);
@@ -120,6 +170,35 @@ public class ForumController {
         topicMap.put("replyList", replyModelList);
         topicMap.put("replyCount", replyCount);
         return UnifiedResult.ok(topicMap);
+    }
+
+    /**
+     * 获取帖子列表
+     *
+     * @return
+     */
+    @PostMapping("/list/topic")
+    @ResponseBody
+    public UnifiedResult getTopicList(Integer page) {
+        if (page == null) {
+            page = 1;
+        }
+        Map<String, Object> map = new HashMap<>();
+        List<TopicWrap> wrapTopicList = forumService.getTopicWrapList(page);
+
+        /*
+            将包装类中的一部分属性封装到响应实体模型中返回
+         */
+        ArrayList<TopicModel> topicModelList = new ArrayList<>();
+        wrapTopicList.forEach(wrapTopic -> {
+            TopicModel topicModel = getTopicModel(wrapTopic);
+            topicModelList.add(topicModel);
+        });
+
+        long topicCount = forumService.getTopicCount();
+        map.put("topicList", topicModelList);
+        map.put("topicCount", topicCount);
+        return UnifiedResult.ok(map);
     }
 
     /**

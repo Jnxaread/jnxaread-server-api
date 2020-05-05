@@ -13,9 +13,9 @@ public class NoticeModel {
 
     private Integer id;
 
-    private Date submitTime;
+    private Date createTime;
 
-    private Date lastSubmitTime;
+    private Date lastTime;
 
     private String label;
 
