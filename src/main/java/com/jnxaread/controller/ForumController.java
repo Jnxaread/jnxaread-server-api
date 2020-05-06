@@ -9,6 +9,7 @@ import com.jnxaread.bean.wrap.ReplyWrap;
 import com.jnxaread.bean.wrap.TopicWrap;
 import com.jnxaread.entity.UnifiedResult;
 import com.jnxaread.service.ForumService;
+import com.jnxaread.util.ContentUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,13 +62,9 @@ public class ForumController {
             return UnifiedResult.build(400, "帖子标题的长度为4至35个字符", null);
         }
 
-        String validate = newTopic.getContent();
-        String validateA = validate.replaceAll(" ", "");
-        String validateB = validateA.replaceAll("<p>", "");
-        String validateC = validateB.replaceAll("</p>", "");
-        String validateD = validateC.replaceAll("&nbsp;", "");
-        String validateE = validateD.replaceAll("<br>", "");
-        if (validateE.length() == 0) {
+        //校验帖子内容是否为空
+        boolean inspection = ContentUtil.inspection(newTopic.getContent());
+        if (!inspection) {
             return UnifiedResult.build(400, "帖子内容不能为空！", null);
         }
 
@@ -102,15 +99,9 @@ public class ForumController {
             return UnifiedResult.build(400, "您已被封禁，无法回复", null);
         }
 
-        //对回复内容进行校验，替换富文本编辑器自动添加的html字符为空字符串
-        //如果替换后的内容长度为0，则返回错误信息
-        String validate = newReply.getContent();
-        String validateA = validate.replaceAll(" ", "");
-        String validateB = validateA.replaceAll("<p>", "");
-        String validateC = validateB.replaceAll("</p>", "");
-        String validateD = validateC.replaceAll("&nbsp;", "");
-        String validateE = validateD.replaceAll("<br>", "");
-        if (validateE.length() == 0) {
+        //校验回复内容是否为空
+        boolean inspection = ContentUtil.inspection(newReply.getContent());
+        if (!inspection) {
             return UnifiedResult.build(400, "回复内容不能为空！", null);
         }
 
