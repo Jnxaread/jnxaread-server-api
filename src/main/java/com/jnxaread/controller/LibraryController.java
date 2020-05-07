@@ -44,14 +44,16 @@ public class LibraryController {
         int fictionId = libraryService.addFiction(newFiction);
         //获取作品的标签数组
         String[] tags = newFiction.getTag();
-        //遍历标签数组，将每个标签封装成标签对象写入数据库中
-        for (String tag : tags) {
-            Label label = new Label();
-            label.setFictionId(fictionId);
-            label.setUserId(user.getId());
-            label.setLabel(tag);
-            label.setCreateTime(new Date());
-            libraryService.addLabel(label);
+        if (tags != null) {
+            //遍历标签数组，将每个标签封装成标签对象写入数据库中
+            for (String tag : tags) {
+                Label label = new Label();
+                label.setFictionId(fictionId);
+                label.setUserId(user.getId());
+                label.setLabel(tag);
+                label.setCreateTime(new Date());
+                libraryService.addLabel(label);
+            }
         }
         return UnifiedResult.ok(fictionId);
     }
