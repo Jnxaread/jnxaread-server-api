@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 文库Controller
@@ -56,6 +58,18 @@ public class LibraryController {
             }
         }
         return UnifiedResult.ok(fictionId);
+    }
+
+    @PostMapping("/detail/fiction")
+    public UnifiedResult getFiction(Integer id,Integer page){
+        if (id==null||page==null){
+            return UnifiedResult.build(400, "参数错误", null);
+        }
+        Map<String, Object> fictionMap = new HashMap<>();
+
+        FictionWrap fictionWrap = libraryService.getFictionWrap(id);
+
+        return null;
     }
 
 }
