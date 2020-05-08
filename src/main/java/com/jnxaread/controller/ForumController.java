@@ -44,9 +44,6 @@ public class ForumController {
     @PostMapping("/new/topic")
     public UnifiedResult submitTopic(HttpSession session, Topic newTopic) {
         User user = (User) session.getAttribute("user");
-        if (user == null) {
-            return UnifiedResult.build(400, "请登录后再发帖！", null);
-        }
         if (user.getLocked()) {
             return UnifiedResult.build(400, "您已被封禁，无法发帖", null);
         }
@@ -92,9 +89,6 @@ public class ForumController {
     @PostMapping("/new/reply")
     public UnifiedResult submitReply(HttpSession session, Reply newReply) {
         User user = (User) session.getAttribute("user");
-        if (user == null) {
-            return UnifiedResult.build(400, "请登录后再回复！", null);
-        }
         if (user.getLocked()) {
             return UnifiedResult.build(400, "您已被封禁，无法回复", null);
         }
