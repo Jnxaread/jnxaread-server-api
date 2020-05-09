@@ -1,9 +1,12 @@
 package com.jnxaread.controller;
 
+import com.jnxaread.bean.Chapter;
 import com.jnxaread.bean.Comment;
 import com.jnxaread.bean.Label;
 import com.jnxaread.bean.User;
+import com.jnxaread.bean.model.CommentModel;
 import com.jnxaread.bean.model.FictionModel;
+import com.jnxaread.bean.wrap.CommentWrap;
 import com.jnxaread.bean.wrap.FictionWrap;
 import com.jnxaread.entity.UnifiedResult;
 import com.jnxaread.service.LibraryService;
@@ -13,9 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 文库Controller
@@ -75,8 +76,18 @@ public class LibraryController {
 
         FictionWrap fictionWrap = libraryService.getFictionWrap(id);
         FictionModel fictionModel = getFictionModel(fictionWrap);
+        fictionMap.put("fiction", fictionModel);
 
-        return UnifiedResult.ok(fictionModel);
+        Chapter chapter0 = libraryService.getChapterByNumber(id,0);
+        List<CommentWrap> commentWrapList = libraryService.getCommentWrapList(chapter0.getId());
+        ArrayList<CommentModel> commentModelList = new ArrayList<>();
+        commentWrapList.forEach(commentWrap -> {
+            CommentModel commentModel = getCommentModel(commentWrap);
+            commentModelList.add(commentModel);
+        });
+        fictionMap.put("comments", commentModelList);
+
+        return UnifiedResult.ok(fictionMap);
     }
 
     /**
@@ -88,6 +99,10 @@ public class LibraryController {
     @PostMapping("/new/comment")
     public UnifiedResult addComment(HttpSession session, Comment newComment) {
         User user = (User) session.getAttribute("user");
+        if (newComment.getChapterId() == null) {
+            Chapter chapter0 = libraryService.getChapterByNumber(newComment.getFictionId(), 0);
+            newComment.setChapterId(chapter0.getId());
+        }
         newComment.setUserId(user.getId());
         newComment.setCreateTime(new Date());
         int result = libraryService.addComment(newComment);
@@ -97,7 +112,7 @@ public class LibraryController {
             case 1:
                 return UnifiedResult.build(400, "章节不存在", null);
             default:
-                return UnifiedResult.build(500,"未知错误",null);
+                return UnifiedResult.build(500, "未知错误", null);
         }
     }
 
@@ -120,6 +135,20 @@ public class LibraryController {
         fictionModel.setCommentCount(fictionWrap.getCommentCount());
         fictionModel.setViewCount(fictionWrap.getViewCount());
         return fictionModel;
+    }
+
+    /**
+     * 将CommentWrap封装到CommentModel
+     *
+     * @param commentWrap
+     * @return
+     */
+    public CommentModel getCommentModel(CommentWrap commentWrap) {
+        CommentModel commentModel = new CommentModel();
+        commentModel.setUsername(commentWrap.getUsername());
+        commentModel.setCreateTime(commentWrap.getCreateTime());
+        commentModel.setContent(commentWrap.getContent());
+        return commentModel;
     }
 
 }
