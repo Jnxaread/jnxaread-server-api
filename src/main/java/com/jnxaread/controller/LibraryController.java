@@ -11,6 +11,7 @@ import com.jnxaread.entity.UnifiedResult;
 import com.jnxaread.model.CommentModel;
 import com.jnxaread.model.FictionModel;
 import com.jnxaread.service.LibraryService;
+import com.jnxaread.util.ContentUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -107,6 +108,8 @@ public class LibraryController {
     public UnifiedResult createChapter(HttpSession session, ChapterWrap newChapter) {
         User user = (User) session.getAttribute("user");
         newChapter.setUserId(user.getId());
+        int wordCount = ContentUtil.getWordCount(newChapter.getContent());
+        newChapter.setWordCount(wordCount);
         newChapter.setCreateTime(new Date());
         int chapterId = libraryService.addChapter(newChapter);
         return UnifiedResult.ok(chapterId);
@@ -140,6 +143,18 @@ public class LibraryController {
         fictionMap.put("comments", commentModelList);
 
         return UnifiedResult.ok(fictionMap);
+    }
+
+    /**
+     * 查看章节详情接口
+     *
+     * @param id
+     * @return
+     */
+    @PostMapping("/detail/chapter")
+    public UnifiedResult getChapter(Integer id) {
+        ChapterWrap chapterWrap = libraryService.getChapterWrap(id);
+        return UnifiedResult.ok(chapterWrap);
     }
 
     /**
