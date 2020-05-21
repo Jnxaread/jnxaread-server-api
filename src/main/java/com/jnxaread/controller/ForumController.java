@@ -3,8 +3,8 @@ package com.jnxaread.controller;
 import com.jnxaread.bean.Reply;
 import com.jnxaread.bean.Topic;
 import com.jnxaread.bean.User;
-import com.jnxaread.bean.model.ReplyModel;
-import com.jnxaread.bean.model.TopicModel;
+import com.jnxaread.model.ReplyModel;
+import com.jnxaread.model.TopicModel;
 import com.jnxaread.bean.wrap.ReplyWrap;
 import com.jnxaread.bean.wrap.TopicWrap;
 import com.jnxaread.entity.UnifiedResult;
@@ -169,13 +169,13 @@ public class ForumController {
             page = 1;
         }
         Map<String, Object> map = new HashMap<>();
-        List<TopicWrap> wrapTopicList = forumService.getTopicWrapList(page);
+        List<TopicWrap> topicWrapList = forumService.getTopicWrapList(page);
 
         /*
             将包装类中的一部分属性封装到响应实体模型中返回
          */
         ArrayList<TopicModel> topicModelList = new ArrayList<>();
-        wrapTopicList.forEach(wrapTopic -> {
+        topicWrapList.forEach(wrapTopic -> {
             TopicModel topicModel = getTopicModel(wrapTopic);
             topicModelList.add(topicModel);
         });

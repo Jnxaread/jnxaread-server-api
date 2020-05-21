@@ -1,6 +1,6 @@
 package com.jnxaread.controller;
 
-import com.jnxaread.bean.model.NoticeModel;
+import com.jnxaread.model.NoticeModel;
 import com.jnxaread.bean.wrap.NoticeWrap;
 import com.jnxaread.entity.UnifiedResult;
 import com.jnxaread.service.NoticeService;

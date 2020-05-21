@@ -1,4 +1,4 @@
-package com.jnxaread.bean.model;
+package com.jnxaread.model;
 
 import lombok.Data;
 

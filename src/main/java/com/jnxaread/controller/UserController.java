@@ -3,7 +3,7 @@ package com.jnxaread.controller;
 import cn.hutool.core.date.DateUtil;
 import com.jnxaread.bean.Login;
 import com.jnxaread.bean.User;
-import com.jnxaread.bean.model.UserModel;
+import com.jnxaread.model.UserModel;
 import com.jnxaread.bean.wrap.UserWrap;
 import com.jnxaread.entity.UnifiedResult;
 import com.jnxaread.service.UserService;

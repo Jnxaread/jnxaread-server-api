@@ -1,4 +1,4 @@
-package com.jnxaread.bean.model;
+package com.jnxaread.model;
 
 import lombok.Data;
 
@@ -21,6 +21,8 @@ public class FictionModel {
     private String title;
 
     private String introduction;
+
+    private String[] tags;
 
     private Integer chapterCount;
 

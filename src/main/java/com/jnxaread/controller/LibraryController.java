@@ -4,11 +4,12 @@ import com.jnxaread.bean.Chapter;
 import com.jnxaread.bean.Comment;
 import com.jnxaread.bean.Label;
 import com.jnxaread.bean.User;
-import com.jnxaread.bean.model.CommentModel;
-import com.jnxaread.bean.model.FictionModel;
+import com.jnxaread.bean.wrap.ChapterWrap;
 import com.jnxaread.bean.wrap.CommentWrap;
 import com.jnxaread.bean.wrap.FictionWrap;
 import com.jnxaread.entity.UnifiedResult;
+import com.jnxaread.model.CommentModel;
+import com.jnxaread.model.FictionModel;
 import com.jnxaread.service.LibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +31,41 @@ public class LibraryController {
 
     @Autowired
     private LibraryService libraryService;
+
+    /**
+     * 分页获取作品列表
+     *
+     * @param page
+     * @return
+     */
+    @PostMapping("/list/fiction")
+    public UnifiedResult getFictionList(Integer page) {
+        if (page == null) {
+            page = 1;
+        }
+        Map<String, Object> map = new HashMap<>();
+        List<FictionWrap> fictionWrapList = libraryService.getFictionWrapList(page);
+
+        /*
+            遍历fictionWrapList，将fictionWrap封装到fictionModel中，并根据fictionId查询作品的标签，
+            将查询到的标签封装到fictionModel的tags数组中
+         */
+        ArrayList<FictionModel> fictionModelList = new ArrayList<>();
+        fictionWrapList.forEach(fictionWrap -> {
+            FictionModel fictionModel = getFictionModel(fictionWrap);
+            List<String> tagList = new ArrayList<>();
+            List<Label> labelList = libraryService.getLabelByFictionId(fictionWrap.getId());
+            labelList.forEach(label -> tagList.add(label.getLabel()));
+            fictionModel.setTags(tagList.toArray(new String[labelList.size()]));
+            fictionModelList.add(fictionModel);
+        });
+
+        long fictionCount = libraryService.getFictionCount();
+        map.put("fictionList", fictionModelList);
+        map.put("fictionCount", fictionCount);
+
+        return UnifiedResult.ok(map);
+    }
 
     /**
      * 创建作品接口
@@ -61,6 +97,22 @@ public class LibraryController {
     }
 
     /**
+     * 创建章节接口
+     *
+     * @param session
+     * @param newChapter
+     * @return
+     */
+    @PostMapping("/new/chapter")
+    public UnifiedResult createChapter(HttpSession session, ChapterWrap newChapter) {
+        User user = (User) session.getAttribute("user");
+        newChapter.setUserId(user.getId());
+        newChapter.setCreateTime(new Date());
+        int chapterId = libraryService.addChapter(newChapter);
+        return UnifiedResult.ok(chapterId);
+    }
+
+    /**
      * 查看帖子详情接口
      *
      * @param id
@@ -78,7 +130,7 @@ public class LibraryController {
         FictionModel fictionModel = getFictionModel(fictionWrap);
         fictionMap.put("fiction", fictionModel);
 
-        Chapter chapter0 = libraryService.getChapterByNumber(id,0);
+        Chapter chapter0 = libraryService.getChapterByNumber(id, 0);
         List<CommentWrap> commentWrapList = libraryService.getCommentWrapList(chapter0.getId());
         ArrayList<CommentModel> commentModelList = new ArrayList<>();
         commentWrapList.forEach(commentWrap -> {
