@@ -40,28 +40,45 @@ public class LibraryController {
      * @return
      */
     @PostMapping("/list/fiction")
-    public UnifiedResult getFictionList(Integer page) {
+    public UnifiedResult getFictionList(Integer userId, Integer page) {
+        if (userId == null) {
+            userId = 0;
+        }
         if (page == null) {
             page = 1;
         }
-        Map<String, Object> map = new HashMap<>();
-        List<FictionWrap> fictionWrapList = libraryService.getFictionWrapList(page);
+        List<FictionWrap> fictionWrapList = libraryService.getFictionWrapList(userId, page);
 
-        /*
-            遍历fictionWrapList，将fictionWrap封装到fictionModel中，并根据fictionId查询作品的标签，
-            将查询到的标签封装到fictionModel的tags数组中
-         */
         ArrayList<FictionModel> fictionModelList = new ArrayList<>();
         fictionWrapList.forEach(fictionWrap -> {
             FictionModel fictionModel = getFictionModel(fictionWrap);
-            List<String> tagList = new ArrayList<>();
-            List<Label> labelList = libraryService.getLabelByFictionId(fictionWrap.getId());
-            labelList.forEach(label -> tagList.add(label.getLabel()));
-            fictionModel.setTags(tagList.toArray(new String[labelList.size()]));
             fictionModelList.add(fictionModel);
         });
 
-        long fictionCount = libraryService.getFictionCount();
+        long fictionCount = libraryService.getFictionCountByUserId(userId);
+        Map<String, Object> map = new HashMap<>();
+        map.put("fictionList", fictionModelList);
+        map.put("fictionCount", fictionCount);
+
+        return UnifiedResult.ok(map);
+    }
+
+    @PostMapping("/list/fiction/own")
+    public UnifiedResult getOwnFictionList(HttpSession session, Integer page) {
+        if (page == null) {
+            page = 1;
+        }
+        User user = (User) session.getAttribute("user");
+        List<FictionWrap> fictionWrapList = libraryService.getOwnFictionWrapList(user.getId(), page);
+
+        ArrayList<FictionModel> fictionModelList = new ArrayList<>();
+        fictionWrapList.forEach(fictionWrap -> {
+            FictionModel fictionModel = getFictionModel(fictionWrap);
+            fictionModelList.add(fictionModel);
+        });
+
+        long fictionCount = libraryService.getOwnFictionCount(user.getId());
+        Map<String, Object> map = new HashMap<>();
         map.put("fictionList", fictionModelList);
         map.put("fictionCount", fictionCount);
 
