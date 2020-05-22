@@ -8,6 +8,7 @@ import com.jnxaread.bean.wrap.ChapterWrap;
 import com.jnxaread.bean.wrap.CommentWrap;
 import com.jnxaread.bean.wrap.FictionWrap;
 import com.jnxaread.entity.UnifiedResult;
+import com.jnxaread.model.ChapterModel;
 import com.jnxaread.model.CommentModel;
 import com.jnxaread.model.FictionModel;
 import com.jnxaread.service.LibraryService;
@@ -34,7 +35,7 @@ public class LibraryController {
     private LibraryService libraryService;
 
     /**
-     * 分页获取作品列表
+     * 分页获取用户作品列表
      *
      * @param page
      * @return
@@ -63,6 +64,13 @@ public class LibraryController {
         return UnifiedResult.ok(map);
     }
 
+    /**
+     * 分页获取我的作品列表接口
+     *
+     * @param session
+     * @param page
+     * @return
+     */
     @PostMapping("/list/fiction/own")
     public UnifiedResult getOwnFictionList(HttpSession session, Integer page) {
         if (page == null) {
@@ -83,6 +91,26 @@ public class LibraryController {
         map.put("fictionCount", fictionCount);
 
         return UnifiedResult.ok(map);
+    }
+
+    /**
+     * 查看作品目录接口
+     *
+     * @param fictionId
+     * @return
+     */
+    @PostMapping("/list/chapter")
+    public UnifiedResult getChapterList(Integer fictionId) {
+        if (fictionId == null) {
+            return UnifiedResult.build(400, "参数错误", null);
+        }
+        List<Chapter> chapterList = libraryService.getChapterList(fictionId);
+        List<ChapterModel> chapterModelList = new ArrayList<>();
+        chapterList.forEach(chapter -> {
+            ChapterModel chapterModel = getChapterModel(chapter);
+            chapterModelList.add(chapterModel);
+        });
+        return UnifiedResult.ok(chapterModelList);
     }
 
     /**
@@ -133,7 +161,7 @@ public class LibraryController {
     }
 
     /**
-     * 查看帖子详情接口
+     * 查看作品详情接口
      *
      * @param id
      * @param page
@@ -163,6 +191,22 @@ public class LibraryController {
     }
 
     /**
+     * 获取作品简要信息接口
+     *
+     * @param id
+     * @return
+     */
+    @PostMapping("/brief/fiction")
+    public UnifiedResult getFictionBrief(Integer id) {
+        if (id == null) {
+            return UnifiedResult.build(400, "参数错误", null);
+        }
+        FictionWrap fictionWrap = libraryService.getFictionWrap(id);
+        FictionModel fictionModel = getFictionModel(fictionWrap);
+        return UnifiedResult.ok(fictionModel);
+    }
+
+    /**
      * 查看章节详情接口
      *
      * @param id
@@ -171,7 +215,19 @@ public class LibraryController {
     @PostMapping("/detail/chapter")
     public UnifiedResult getChapter(Integer id) {
         ChapterWrap chapterWrap = libraryService.getChapterWrap(id);
-        return UnifiedResult.ok(chapterWrap);
+        ChapterModel chapterModel = getChapterModel(chapterWrap);
+        List<CommentWrap> commentWrapList = libraryService.getCommentWrapList(id);
+        List<CommentModel> commentModelList = new ArrayList<>();
+        commentWrapList.forEach(commentWrap -> {
+            CommentModel commentModel = getCommentModel(commentWrap);
+            commentModelList.add(commentModel);
+        });
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("chapter", chapterModel);
+        map.put("comments", commentModelList);
+
+        return UnifiedResult.ok(map);
     }
 
     /**
@@ -183,9 +239,14 @@ public class LibraryController {
     @PostMapping("/new/comment")
     public UnifiedResult addComment(HttpSession session, Comment newComment) {
         User user = (User) session.getAttribute("user");
-        if (newComment.getChapterId() == null) {
+        if (newComment.getFictionId() == null && newComment.getChapterId() != null) {
+            Chapter chapter = libraryService.getChapter(newComment.getChapterId());
+            newComment.setFictionId(chapter.getFictionId());
+        } else if (newComment.getFictionId() != null && newComment.getChapterId() == null) {
             Chapter chapter0 = libraryService.getChapterByNumber(newComment.getFictionId(), 0);
             newComment.setChapterId(chapter0.getId());
+        } else {
+            return UnifiedResult.build(400, "参数错误", null);
         }
         newComment.setUserId(user.getId());
         newComment.setCreateTime(new Date());
@@ -219,6 +280,53 @@ public class LibraryController {
         fictionModel.setCommentCount(fictionWrap.getCommentCount());
         fictionModel.setViewCount(fictionWrap.getViewCount());
         return fictionModel;
+    }
+
+    /**
+     * 将Chapter封装到ChapterModel中
+     *
+     * @param chapter
+     * @return
+     */
+    public ChapterModel getChapterModel(Chapter chapter) {
+        ChapterModel chapterModel = new ChapterModel();
+        chapterModel.setId(chapter.getId());
+        chapterModel.setFictionId(chapter.getFictionId());
+        chapterModel.setCreateTime(chapter.getCreateTime());
+        chapterModel.setNumber(chapter.getNumber());
+        chapterModel.setTitle(chapter.getTitle());
+        chapterModel.setWordCount(chapter.getWordCount());
+        chapterModel.setCommentCount(chapter.getCommentCount());
+        chapterModel.setViewCount(chapter.getViewCount());
+        if (chapter.getContent() != null) {
+            chapterModel.setContent(chapter.getContent());
+        }
+        return chapterModel;
+    }
+
+    /**
+     * 将ChapterWrap封装到ChapterModel中
+     *
+     * @param chapterWrap
+     * @return
+     */
+    public ChapterModel getChapterModel(ChapterWrap chapterWrap) {
+        ChapterModel chapterModel = new ChapterModel();
+        chapterModel.setId(chapterWrap.getId());
+        chapterModel.setFictionId(chapterWrap.getFictionId());
+        if (chapterWrap.getUsername() != null) {
+            chapterModel.setAuthor(chapterWrap.getUsername());
+        }
+        chapterModel.setCreateTime(chapterWrap.getCreateTime());
+        chapterModel.setNumber(chapterWrap.getNumber());
+        chapterModel.setTitle(chapterWrap.getTitle());
+        chapterModel.setWordCount(chapterWrap.getWordCount());
+        chapterModel.setCommentCount(chapterWrap.getCommentCount());
+        chapterModel.setViewCount(chapterWrap.getViewCount());
+        if (chapterWrap.getContent() != null) {
+            chapterModel.setContent(chapterWrap.getContent());
+        }
+        return chapterModel;
     }
 
     /**
