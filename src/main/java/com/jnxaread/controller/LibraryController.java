@@ -13,6 +13,7 @@ import com.jnxaread.model.CommentModel;
 import com.jnxaread.model.FictionModel;
 import com.jnxaread.service.LibraryService;
 import com.jnxaread.util.ContentUtil;
+import com.jnxaread.util.ModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,7 +53,7 @@ public class LibraryController {
 
         ArrayList<FictionModel> fictionModelList = new ArrayList<>();
         fictionWrapList.forEach(fictionWrap -> {
-            FictionModel fictionModel = getFictionModel(fictionWrap);
+            FictionModel fictionModel = ModelUtil.getFictionModel(fictionWrap);
             fictionModelList.add(fictionModel);
         });
 
@@ -81,7 +82,7 @@ public class LibraryController {
 
         ArrayList<FictionModel> fictionModelList = new ArrayList<>();
         fictionWrapList.forEach(fictionWrap -> {
-            FictionModel fictionModel = getFictionModel(fictionWrap);
+            FictionModel fictionModel = ModelUtil.getFictionModel(fictionWrap);
             fictionModelList.add(fictionModel);
         });
 
@@ -107,7 +108,7 @@ public class LibraryController {
         List<Chapter> chapterList = libraryService.getChapterList(fictionId);
         List<ChapterModel> chapterModelList = new ArrayList<>();
         chapterList.forEach(chapter -> {
-            ChapterModel chapterModel = getChapterModel(chapter);
+            ChapterModel chapterModel = ModelUtil.getChapterModel(chapter);
             chapterModelList.add(chapterModel);
         });
         return UnifiedResult.ok(chapterModelList);
@@ -152,12 +153,19 @@ public class LibraryController {
     @PostMapping("/new/chapter")
     public UnifiedResult createChapter(HttpSession session, ChapterWrap newChapter) {
         User user = (User) session.getAttribute("user");
+
         newChapter.setUserId(user.getId());
         int wordCount = ContentUtil.getWordCount(newChapter.getContent());
         newChapter.setWordCount(wordCount);
         newChapter.setCreateTime(new Date());
         int chapterId = libraryService.addChapter(newChapter);
-        return UnifiedResult.ok(chapterId);
+        if (chapterId > 0) {
+            return UnifiedResult.ok(chapterId);
+        } else if (chapterId == -1) {
+            return UnifiedResult.build(400, "章节号已存在", null);
+        } else {
+            return UnifiedResult.build(400, "章节号错误", null);
+        }
     }
 
     /**
@@ -175,14 +183,14 @@ public class LibraryController {
         Map<String, Object> fictionMap = new HashMap<>();
 
         FictionWrap fictionWrap = libraryService.getFictionWrap(id);
-        FictionModel fictionModel = getFictionModel(fictionWrap);
+        FictionModel fictionModel = ModelUtil.getFictionModel(fictionWrap);
         fictionMap.put("fiction", fictionModel);
 
         Chapter chapter0 = libraryService.getChapterByNumber(id, 0);
         List<CommentWrap> commentWrapList = libraryService.getCommentWrapList(chapter0.getId());
         ArrayList<CommentModel> commentModelList = new ArrayList<>();
         commentWrapList.forEach(commentWrap -> {
-            CommentModel commentModel = getCommentModel(commentWrap);
+            CommentModel commentModel = ModelUtil.getCommentModel(commentWrap);
             commentModelList.add(commentModel);
         });
         fictionMap.put("comments", commentModelList);
@@ -202,7 +210,7 @@ public class LibraryController {
             return UnifiedResult.build(400, "参数错误", null);
         }
         FictionWrap fictionWrap = libraryService.getFictionWrap(id);
-        FictionModel fictionModel = getFictionModel(fictionWrap);
+        FictionModel fictionModel = ModelUtil.getFictionModel(fictionWrap);
         return UnifiedResult.ok(fictionModel);
     }
 
@@ -215,11 +223,11 @@ public class LibraryController {
     @PostMapping("/detail/chapter")
     public UnifiedResult getChapter(Integer id) {
         ChapterWrap chapterWrap = libraryService.getChapterWrap(id);
-        ChapterModel chapterModel = getChapterModel(chapterWrap);
+        ChapterModel chapterModel = ModelUtil.getChapterModel(chapterWrap);
         List<CommentWrap> commentWrapList = libraryService.getCommentWrapList(id);
         List<CommentModel> commentModelList = new ArrayList<>();
         commentWrapList.forEach(commentWrap -> {
-            CommentModel commentModel = getCommentModel(commentWrap);
+            CommentModel commentModel = ModelUtil.getCommentModel(commentWrap);
             commentModelList.add(commentModel);
         });
 
@@ -259,89 +267,6 @@ public class LibraryController {
             default:
                 return UnifiedResult.build(500, "未知错误", null);
         }
-    }
-
-    /**
-     * 将FictionWrap封装到FictionModel
-     *
-     * @param fictionWrap
-     * @return
-     */
-    public FictionModel getFictionModel(FictionWrap fictionWrap) {
-        FictionModel fictionModel = new FictionModel();
-        fictionModel.setId(fictionWrap.getId());
-        fictionModel.setCategory(fictionWrap.getCategory());
-        fictionModel.setAuthor(fictionWrap.getUsername());
-        fictionModel.setCreateTime(fictionWrap.getCreateTime());
-        fictionModel.setTitle(fictionWrap.getTitle());
-        fictionModel.setIntroduction(fictionWrap.getIntroduction());
-        fictionModel.setTags(fictionWrap.getTags());
-        fictionModel.setChapterCount(fictionWrap.getChapterCount());
-        fictionModel.setWordCount(fictionWrap.getWordCount());
-        fictionModel.setCommentCount(fictionWrap.getCommentCount());
-        fictionModel.setViewCount(fictionWrap.getViewCount());
-        return fictionModel;
-    }
-
-    /**
-     * 将Chapter封装到ChapterModel中
-     *
-     * @param chapter
-     * @return
-     */
-    public ChapterModel getChapterModel(Chapter chapter) {
-        ChapterModel chapterModel = new ChapterModel();
-        chapterModel.setId(chapter.getId());
-        chapterModel.setFictionId(chapter.getFictionId());
-        chapterModel.setCreateTime(chapter.getCreateTime());
-        chapterModel.setNumber(chapter.getNumber());
-        chapterModel.setTitle(chapter.getTitle());
-        chapterModel.setWordCount(chapter.getWordCount());
-        chapterModel.setCommentCount(chapter.getCommentCount());
-        chapterModel.setViewCount(chapter.getViewCount());
-        if (chapter.getContent() != null) {
-            chapterModel.setContent(chapter.getContent());
-        }
-        return chapterModel;
-    }
-
-    /**
-     * 将ChapterWrap封装到ChapterModel中
-     *
-     * @param chapterWrap
-     * @return
-     */
-    public ChapterModel getChapterModel(ChapterWrap chapterWrap) {
-        ChapterModel chapterModel = new ChapterModel();
-        chapterModel.setId(chapterWrap.getId());
-        chapterModel.setFictionId(chapterWrap.getFictionId());
-        if (chapterWrap.getUsername() != null) {
-            chapterModel.setAuthor(chapterWrap.getUsername());
-        }
-        chapterModel.setCreateTime(chapterWrap.getCreateTime());
-        chapterModel.setNumber(chapterWrap.getNumber());
-        chapterModel.setTitle(chapterWrap.getTitle());
-        chapterModel.setWordCount(chapterWrap.getWordCount());
-        chapterModel.setCommentCount(chapterWrap.getCommentCount());
-        chapterModel.setViewCount(chapterWrap.getViewCount());
-        if (chapterWrap.getContent() != null) {
-            chapterModel.setContent(chapterWrap.getContent());
-        }
-        return chapterModel;
-    }
-
-    /**
-     * 将CommentWrap封装到CommentModel
-     *
-     * @param commentWrap
-     * @return
-     */
-    public CommentModel getCommentModel(CommentWrap commentWrap) {
-        CommentModel commentModel = new CommentModel();
-        commentModel.setUsername(commentWrap.getUsername());
-        commentModel.setCreateTime(commentWrap.getCreateTime());
-        commentModel.setContent(commentWrap.getContent());
-        return commentModel;
     }
 
 }

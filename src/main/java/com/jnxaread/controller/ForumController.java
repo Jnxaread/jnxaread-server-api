@@ -10,6 +10,7 @@ import com.jnxaread.model.ReplyModel;
 import com.jnxaread.model.TopicModel;
 import com.jnxaread.service.ForumService;
 import com.jnxaread.util.ContentUtil;
+import com.jnxaread.util.ModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -139,13 +140,13 @@ public class ForumController {
             return UnifiedResult.build(400, "帖子不存在", null);
         }
 
-        TopicModel topicModel = getTopicModel(wrapTopic);
+        TopicModel topicModel = ModelUtil.getTopicModel(wrapTopic);
 
         List<ReplyWrap> wrapReplyList = forumService.getReplyWrapList(id, page);
 
         ArrayList<ReplyModel> replyModelList = new ArrayList<>();
         wrapReplyList.forEach(wrapReply -> {
-            ReplyModel replyModel = getReplyModel(wrapReply);
+            ReplyModel replyModel = ModelUtil.getReplyModel(wrapReply);
             replyModelList.add(replyModel);
         });
 
@@ -176,7 +177,7 @@ public class ForumController {
          */
         ArrayList<TopicModel> topicModelList = new ArrayList<>();
         topicWrapList.forEach(wrapTopic -> {
-            TopicModel topicModel = getTopicModel(wrapTopic);
+            TopicModel topicModel = ModelUtil.getTopicModel(wrapTopic);
             topicModelList.add(topicModel);
         });
 
@@ -184,49 +185,6 @@ public class ForumController {
         map.put("topicList", topicModelList);
         map.put("topicCount", topicCount);
         return UnifiedResult.ok(map);
-    }
-
-    /**
-     * 将TopicWrap封装到TopicModel
-     *
-     * @param wrapTopic
-     * @return
-     */
-    public TopicModel getTopicModel(TopicWrap wrapTopic) {
-        TopicModel topicModel = new TopicModel();
-        topicModel.setId(wrapTopic.getId());
-        topicModel.setLabel(wrapTopic.getLabel());
-        topicModel.setTitle(wrapTopic.getTitle());
-        if (wrapTopic.getContent() != null) {
-            topicModel.setContent(wrapTopic.getContent());
-        }
-        topicModel.setUsername(wrapTopic.getUsername());
-        topicModel.setCreateTime(wrapTopic.getCreateTime());
-        if (wrapTopic.getLastReply() != null) {
-            topicModel.setLastReply(wrapTopic.getLastReply());
-        }
-        if (wrapTopic.getLastSubmit() != null) {
-            topicModel.setLastSubmit(wrapTopic.getLastSubmit());
-        }
-        topicModel.setReplyCount(wrapTopic.getReplyCount());
-        topicModel.setViewCount(wrapTopic.getViewCount());
-        return topicModel;
-    }
-
-    /**
-     * 将ReplyWrap封装到ReplyModel
-     *
-     * @param wrapReply
-     * @return
-     */
-    public ReplyModel getReplyModel(ReplyWrap wrapReply) {
-        ReplyModel replyModel = new ReplyModel();
-        replyModel.setUsername(wrapReply.getUsername());
-        replyModel.setCreateTime(wrapReply.getCreateTime());
-        replyModel.setFloor(wrapReply.getFloor());
-        replyModel.setQuote(wrapReply.getQuote());
-        replyModel.setContent(wrapReply.getContent());
-        return replyModel;
     }
 
 }
