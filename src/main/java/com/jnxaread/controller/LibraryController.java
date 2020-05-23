@@ -275,6 +275,7 @@ public class LibraryController {
         fictionModel.setCreateTime(fictionWrap.getCreateTime());
         fictionModel.setTitle(fictionWrap.getTitle());
         fictionModel.setIntroduction(fictionWrap.getIntroduction());
+        fictionModel.setTags(fictionWrap.getTags());
         fictionModel.setChapterCount(fictionWrap.getChapterCount());
         fictionModel.setWordCount(fictionWrap.getWordCount());
         fictionModel.setCommentCount(fictionWrap.getCommentCount());
