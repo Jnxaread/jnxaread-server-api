@@ -29,6 +29,9 @@ public class ModelUtil {
         fictionModel.setWordCount(fictionWrap.getWordCount());
         fictionModel.setCommentCount(fictionWrap.getCommentCount());
         fictionModel.setViewCount(fictionWrap.getViewCount());
+        fictionModel.setLastTime(fictionWrap.getLastTime());
+        fictionModel.setLastNumber(fictionWrap.getLastNumber());
+        fictionModel.setLastChapter(fictionWrap.getLastChapter());
         return fictionModel;
     }
 

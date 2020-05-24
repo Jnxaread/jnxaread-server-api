@@ -31,4 +31,10 @@ public class FictionModel {
     private Integer commentCount;
 
     private Long viewCount;
+
+    private Date lastTime;
+
+    private Integer lastNumber;
+
+    private String lastChapter;
 }
