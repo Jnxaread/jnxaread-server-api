@@ -91,6 +91,7 @@ public class UserController {
 
         UserModel userModel = new UserModel();
         userModel.setUsername(user.getUsername());
+        userModel.setIntroduction(user.getIntroduction());
 
         return UnifiedResult.ok(userModel);
     }

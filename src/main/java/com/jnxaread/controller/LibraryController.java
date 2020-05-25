@@ -59,7 +59,7 @@ public class LibraryController {
 
         long fictionCount = libraryService.getFictionCountByUserId(userId);
         Map<String, Object> map = new HashMap<>();
-        map.put("fictionList", fictionModelList);
+        map.put("fictions", fictionModelList);
         map.put("fictionCount", fictionCount);
 
         return UnifiedResult.ok(map);
