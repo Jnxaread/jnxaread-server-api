@@ -11,11 +11,15 @@ import java.util.Date;
 @Data
 public class ReplyModel {
 
+    private Integer id;
+
     private Date createTime;
 
     private Integer floor;
 
     private Integer quote;
+
+    private ReplyModel quotedReply;
 
     private String content;
 

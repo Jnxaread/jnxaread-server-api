@@ -153,7 +153,7 @@ public class ForumController {
         long replyCount = forumService.getReplyCountByTopicId(id);
 
         topicMap.put("topic", topicModel);
-        topicMap.put("replyList", replyModelList);
+        topicMap.put("replies", replyModelList);
         topicMap.put("replyCount", replyCount);
         return UnifiedResult.ok(topicMap);
     }

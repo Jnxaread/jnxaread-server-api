@@ -131,10 +131,15 @@ public class ModelUtil {
      */
     public static ReplyModel getReplyModel(ReplyWrap wrapReply) {
         ReplyModel replyModel = new ReplyModel();
+        replyModel.setId(wrapReply.getId());
         replyModel.setUsername(wrapReply.getUsername());
         replyModel.setCreateTime(wrapReply.getCreateTime());
         replyModel.setFloor(wrapReply.getFloor());
         replyModel.setQuote(wrapReply.getQuote());
+        if (wrapReply.getQuotedReply() != null) {
+            ReplyModel quotedReplyModel = getReplyModel(wrapReply.getQuotedReply());
+            replyModel.setQuotedReply(quotedReplyModel);
+        }
         replyModel.setContent(wrapReply.getContent());
         return replyModel;
     }
