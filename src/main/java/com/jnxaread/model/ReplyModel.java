@@ -25,4 +25,8 @@ public class ReplyModel {
 
     private String username;
 
+    private Integer topicId;
+
+    private String topicTitle;
+
 }

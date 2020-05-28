@@ -269,4 +269,24 @@ public class LibraryController {
         }
     }
 
+    /**
+     * 获取用户评论列表
+     *
+     * @param userId
+     * @return
+     */
+    @PostMapping("/list/comment")
+    public UnifiedResult getUserCommentList(Integer userId) {
+        if (userId == null) {
+            return UnifiedResult.build(400, "参数错误", null);
+        }
+        List<CommentWrap> commentWrapList = libraryService.getCommentWrapListByUserId(userId);
+        List<CommentModel> commentModelList = new ArrayList<>();
+        commentWrapList.forEach(commentWrap -> {
+            CommentModel commentModel = ModelUtil.getCommentModel(commentWrap);
+            commentModelList.add(commentModel);
+        });
+        return UnifiedResult.ok(commentModelList);
+    }
+
 }

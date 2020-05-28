@@ -1,6 +1,7 @@
 package com.jnxaread.util;
 
 import com.jnxaread.bean.Chapter;
+import com.jnxaread.bean.Reply;
 import com.jnxaread.bean.wrap.*;
 import com.jnxaread.model.*;
 
@@ -93,6 +94,7 @@ public class ModelUtil {
         commentModel.setUsername(commentWrap.getUsername());
         commentModel.setCreateTime(commentWrap.getCreateTime());
         commentModel.setContent(commentWrap.getContent());
+        commentModel.setFictionTitle(commentWrap.getFictionTitle());
         return commentModel;
     }
 
@@ -124,23 +126,42 @@ public class ModelUtil {
     }
 
     /**
-     * 将ReplyWrap封装到ReplyModel
+     * 将Reply封装到ReplyModel中
      *
-     * @param wrapReply
+     * @param reply
      * @return
      */
-    public static ReplyModel getReplyModel(ReplyWrap wrapReply) {
+    public static ReplyModel getReplyModel(Reply reply) {
         ReplyModel replyModel = new ReplyModel();
-        replyModel.setId(wrapReply.getId());
-        replyModel.setUsername(wrapReply.getUsername());
-        replyModel.setCreateTime(wrapReply.getCreateTime());
-        replyModel.setFloor(wrapReply.getFloor());
-        replyModel.setQuote(wrapReply.getQuote());
-        if (wrapReply.getQuotedReply() != null) {
-            ReplyModel quotedReplyModel = getReplyModel(wrapReply.getQuotedReply());
+        replyModel.setId(reply.getId());
+        replyModel.setCreateTime(reply.getCreateTime());
+        replyModel.setFloor(reply.getFloor());
+        replyModel.setContent(reply.getContent());
+        return replyModel;
+    }
+
+    /**
+     * 将ReplyWrap封装到ReplyModel
+     *
+     * @param replyWrap
+     * @return
+     */
+    public static ReplyModel getReplyModel(ReplyWrap replyWrap) {
+        ReplyModel replyModel = new ReplyModel();
+        replyModel.setId(replyWrap.getId());
+        replyModel.setUsername(replyWrap.getUsername());
+        replyModel.setCreateTime(replyWrap.getCreateTime());
+        replyModel.setFloor(replyWrap.getFloor());
+        replyModel.setQuote(replyWrap.getQuote());
+        if (replyWrap.getQuotedReply() != null) {
+            ReplyModel quotedReplyModel = getReplyModel(replyWrap.getQuotedReply());
             replyModel.setQuotedReply(quotedReplyModel);
         }
-        replyModel.setContent(wrapReply.getContent());
+        replyModel.setContent(replyWrap.getContent());
+        replyModel.setTopicId(replyWrap.getTopicId());
+        if (replyWrap.getTopicTitle() != null) {
+            replyModel.setTopicTitle(replyWrap.getTopicTitle());
+        }
         return replyModel;
     }
 

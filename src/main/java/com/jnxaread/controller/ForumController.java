@@ -187,4 +187,24 @@ public class ForumController {
         return UnifiedResult.ok(map);
     }
 
+    /**
+     * 获取用户的回复列表
+     *
+     * @param userId
+     * @return
+     */
+    @PostMapping("/list/reply")
+    public UnifiedResult getUserReplyList(Integer userId) {
+        if (userId == null) {
+            return UnifiedResult.build(400, "参数错误", null);
+        }
+        List<ReplyWrap> replyWrapList = forumService.getReplyWrapListByUserId(userId);
+        List<ReplyModel> replyModelList = new ArrayList<>();
+        replyWrapList.forEach(replyWrap -> {
+            ReplyModel replyModel = ModelUtil.getReplyModel(replyWrap);
+            replyModelList.add(replyModel);
+        });
+        return UnifiedResult.ok(replyModelList);
+    }
+
 }

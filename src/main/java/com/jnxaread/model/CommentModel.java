@@ -17,4 +17,6 @@ public class CommentModel {
 
     private String content;
 
+    private String fictionTitle;
+
 }

@@ -90,6 +90,7 @@ public class UserController {
         userService.addLogin(newLogin);
 
         UserModel userModel = new UserModel();
+        userModel.setId(user.getId());
         userModel.setUsername(user.getUsername());
         userModel.setIntroduction(user.getIntroduction());
 
