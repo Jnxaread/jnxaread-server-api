@@ -206,12 +206,25 @@ public class LibraryController {
      */
     @PostMapping("/brief/fiction")
     public UnifiedResult getFictionBrief(Integer id) {
-        if (id == null) {
-            return UnifiedResult.build(400, "参数错误", null);
-        }
+        if (id == null) return UnifiedResult.build(400, "参数错误", null);
         FictionWrap fictionWrap = libraryService.getFictionWrap(id);
         FictionModel fictionModel = ModelUtil.getFictionModel(fictionWrap);
         return UnifiedResult.ok(fictionModel);
+    }
+
+    /**
+     * 根据作品id和章节号获取章节的简略信息
+     *
+     * @param fictionId
+     * @param number
+     * @return
+     */
+    @PostMapping("/brief/chapter")
+    public UnifiedResult getChapterBrief(Integer fictionId, Integer number) {
+        if (fictionId == null || number == null) return UnifiedResult.build(400, "参数错误", null);
+        Chapter chapter = libraryService.getChapterByNumber(fictionId, number);
+        ChapterModel chapterModel = ModelUtil.getChapterModel(chapter);
+        return UnifiedResult.ok(chapterModel);
     }
 
     /**
@@ -222,7 +235,9 @@ public class LibraryController {
      */
     @PostMapping("/detail/chapter")
     public UnifiedResult getChapter(Integer id) {
+        if (id == null) return UnifiedResult.build(400, "参数错误", null);
         ChapterWrap chapterWrap = libraryService.getChapterWrap(id);
+        if (chapterWrap == null) return UnifiedResult.build(400, "章节不存在", null);
         ChapterModel chapterModel = ModelUtil.getChapterModel(chapterWrap);
         List<CommentWrap> commentWrapList = libraryService.getCommentWrapList(id);
         List<CommentModel> commentModelList = new ArrayList<>();
