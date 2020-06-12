@@ -208,6 +208,7 @@ public class LibraryController {
     public UnifiedResult getFictionBrief(Integer id) {
         if (id == null) return UnifiedResult.build(400, "参数错误", null);
         FictionWrap fictionWrap = libraryService.getFictionWrap(id);
+        fictionWrap.setMaxNumber(fictionWrap.getMaxNumber()+1);
         FictionModel fictionModel = ModelUtil.getFictionModel(fictionWrap);
         return UnifiedResult.ok(fictionModel);
     }

@@ -97,6 +97,12 @@ public class UserController {
         return UnifiedResult.ok(userModel);
     }
 
+    @PostMapping("/logout")
+    public UnifiedResult logout(HttpSession session){
+        session.removeAttribute("user");
+        return UnifiedResult.ok();
+    }
+
     /**
      * 用户注册接口
      *
