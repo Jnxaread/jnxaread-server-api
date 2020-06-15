@@ -33,7 +33,6 @@ public class ModelUtil {
         fictionModel.setLastTime(fictionWrap.getLastTime());
         fictionModel.setLastNumber(fictionWrap.getLastNumber());
         fictionModel.setLastChapter(fictionWrap.getLastChapter());
-        fictionModel.setMaxNumber(fictionWrap.getMaxNumber());
         return fictionModel;
     }
 
