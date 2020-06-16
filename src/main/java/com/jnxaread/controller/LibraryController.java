@@ -38,18 +38,16 @@ public class LibraryController {
     /**
      * 分页获取用户作品列表
      *
+     * @param userId
+     * @param level
      * @param page
      * @return
      */
     @PostMapping("/list/fiction")
-    public UnifiedResult getFictionList(Integer userId, Integer page) {
-        if (userId == null) {
-            userId = 0;
-        }
-        if (page == null) {
-            page = 1;
-        }
-        List<FictionWrap> fictionWrapList = libraryService.getFictionWrapList(userId, page);
+    public UnifiedResult getFictionList(Integer userId, Integer level, Integer page) {
+        if (userId == null || page == null) return UnifiedResult.build(400, "参数错误", null);
+
+        List<FictionWrap> fictionWrapList = libraryService.getFictionWrapList(userId, level, page);
 
         ArrayList<FictionModel> fictionModelList = new ArrayList<>();
         fictionWrapList.forEach(fictionWrap -> {
@@ -98,14 +96,14 @@ public class LibraryController {
      * 查看作品目录接口
      *
      * @param fictionId
+     * @param level
      * @return
      */
     @PostMapping("/list/chapter")
-    public UnifiedResult getChapterList(Integer fictionId) {
-        if (fictionId == null) {
-            return UnifiedResult.build(400, "参数错误", null);
-        }
-        List<Chapter> chapterList = libraryService.getChapterList(fictionId);
+    public UnifiedResult getChapterList(Integer fictionId, Integer level) {
+        if (fictionId == null) return UnifiedResult.build(400, "参数错误", null);
+
+        List<Chapter> chapterList = libraryService.getChapterList(fictionId, level);
         List<ChapterModel> chapterModelList = new ArrayList<>();
         chapterList.forEach(chapter -> {
             ChapterModel chapterModel = ModelUtil.getChapterModel(chapter);

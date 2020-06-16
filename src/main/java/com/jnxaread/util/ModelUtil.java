@@ -22,6 +22,7 @@ public class ModelUtil {
         UserModel userModel = new UserModel();
         userModel.setId(user.getId());
         userModel.setUsername(user.getUsername());
+        userModel.setLevel(user.getLevel());
         userModel.setIntroduction(user.getIntroduction());
         return userModel;
     }

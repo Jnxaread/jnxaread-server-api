@@ -165,12 +165,11 @@ public class ForumController {
      */
     @PostMapping("/list/topic")
     @ResponseBody
-    public UnifiedResult getTopicList(Integer page) {
-        if (page == null) {
-            page = 1;
-        }
+    public UnifiedResult getTopicList(Integer level,Integer page) {
+        if (page == null) return UnifiedResult.build(400,"参数错误",null);
+
         Map<String, Object> map = new HashMap<>();
-        List<TopicWrap> topicWrapList = forumService.getTopicWrapList(page);
+        List<TopicWrap> topicWrapList = forumService.getTopicWrapList(level,page);
 
         /*
             将包装类中的一部分属性封装到响应实体模型中返回
