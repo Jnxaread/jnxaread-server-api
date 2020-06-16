@@ -73,9 +73,9 @@ public class UserController {
 
         session.setAttribute("user", user);
 
-        // 用户登录次数+1
+        /*// 用户登录次数+1
         user.setLoginCount(user.getLoginCount() + 1);
-        userService.updateUser(user);
+        userService.updateUser(user);*/
 
         //记录用户登录ip、时间
         Login newLogin = new Login();
@@ -98,7 +98,7 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public UnifiedResult logout(HttpSession session){
+    public UnifiedResult logout(HttpSession session) {
         session.removeAttribute("user");
         return UnifiedResult.ok();
     }
