@@ -2,6 +2,7 @@ package com.jnxaread.util;
 
 import com.jnxaread.bean.Chapter;
 import com.jnxaread.bean.Reply;
+import com.jnxaread.bean.User;
 import com.jnxaread.bean.wrap.*;
 import com.jnxaread.model.*;
 
@@ -10,6 +11,20 @@ import com.jnxaread.model.*;
  * @create 2020-05-23 18:04
  */
 public class ModelUtil {
+
+    /**
+     * 将User封装到UserModel
+     *
+     * @param user
+     * @return
+     */
+    public static UserModel getUserModel(User user) {
+        UserModel userModel = new UserModel();
+        userModel.setId(user.getId());
+        userModel.setUsername(user.getUsername());
+        userModel.setIntroduction(user.getIntroduction());
+        return userModel;
+    }
 
     /**
      * 将FictionWrap封装到FictionModel

@@ -7,6 +7,7 @@ import com.jnxaread.bean.wrap.UserWrap;
 import com.jnxaread.entity.UnifiedResult;
 import com.jnxaread.model.UserModel;
 import com.jnxaread.service.UserService;
+import com.jnxaread.util.ModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -70,12 +71,7 @@ public class UserController {
         if (user == null || !user.getPassword().equals(password)) {
             return UnifiedResult.build(400, "账号或密码错误", null);
         }
-
         session.setAttribute("user", user);
-
-        /*// 用户登录次数+1
-        user.setLoginCount(user.getLoginCount() + 1);
-        userService.updateUser(user);*/
 
         //记录用户登录ip、时间
         Login newLogin = new Login();
@@ -86,14 +82,9 @@ public class UserController {
         String terminal = request.getParameter("terminal");
         newLogin.setTerminal(terminal);
         newLogin.setSystem(0);
-
         userService.addLogin(newLogin);
 
-        UserModel userModel = new UserModel();
-        userModel.setId(user.getId());
-        userModel.setUsername(user.getUsername());
-        userModel.setIntroduction(user.getIntroduction());
-
+        UserModel userModel = ModelUtil.getUserModel(user);
         return UnifiedResult.ok(userModel);
     }
 
