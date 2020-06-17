@@ -6,6 +6,7 @@ import com.jnxaread.bean.User;
 import com.jnxaread.bean.wrap.ReplyWrap;
 import com.jnxaread.bean.wrap.TopicWrap;
 import com.jnxaread.entity.UnifiedResult;
+import com.jnxaread.entity.UserLevel;
 import com.jnxaread.model.ReplyModel;
 import com.jnxaread.model.TopicModel;
 import com.jnxaread.service.ForumService;
@@ -34,6 +35,9 @@ public class ForumController {
 
     @Autowired
     private ForumService forumService;
+
+    @Autowired
+    private UserLevel userLevel;
 
     /**
      * 发帖
@@ -165,11 +169,22 @@ public class ForumController {
      */
     @PostMapping("/list/topic")
     @ResponseBody
-    public UnifiedResult getTopicList(Integer level,Integer page) {
-        if (page == null) return UnifiedResult.build(400,"参数错误",null);
+    public UnifiedResult getTopicList(HttpSession session, Integer userId, Integer page) {
+        if (page == null) return UnifiedResult.build(400, "参数错误", null);
+
+        User user = (User) session.getAttribute("user");
+        Integer level;
+        if (user == null) level = 0;
+        else {
+            if (user.getId().equals(userId)) {
+                level = userLevel.getLevelArr()[userLevel.getLevelArr().length - 1];
+            } else {
+                level = user.getLevel();
+            }
+        }
 
         Map<String, Object> map = new HashMap<>();
-        List<TopicWrap> topicWrapList = forumService.getTopicWrapList(level,page);
+        List<TopicWrap> topicWrapList = forumService.getTopicWrapList(level, page);
 
         /*
             将包装类中的一部分属性封装到响应实体模型中返回
@@ -190,14 +205,26 @@ public class ForumController {
      * 获取用户的回复列表
      *
      * @param userId
+     * @param level
      * @return
      */
     @PostMapping("/list/reply")
-    public UnifiedResult getUserReplyList(Integer userId) {
-        if (userId == null) {
-            return UnifiedResult.build(400, "参数错误", null);
+    public UnifiedResult getUserReplyList(HttpSession session, Integer userId) {
+        if (userId == null) return UnifiedResult.build(400, "参数错误", null);
+
+        User user = (User) session.getAttribute("user");
+        Integer level;
+        if (user == null) {
+            level = 0;
+        } else {
+            if (user.getId().equals(userId)) {
+                level = userLevel.getLevelArr()[userLevel.getLevelArr().length - 1];
+            } else {
+                level = user.getLevel();
+            }
         }
-        List<ReplyWrap> replyWrapList = forumService.getReplyWrapListByUserId(userId);
+
+        List<ReplyWrap> replyWrapList = forumService.getReplyWrapListByUserId(userId, level);
         List<ReplyModel> replyModelList = new ArrayList<>();
         replyWrapList.forEach(replyWrap -> {
             ReplyModel replyModel = ModelUtil.getReplyModel(replyWrap);

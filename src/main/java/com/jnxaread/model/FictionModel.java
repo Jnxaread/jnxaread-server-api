@@ -37,6 +37,4 @@ public class FictionModel {
     private Integer lastNumber;
 
     private String lastChapter;
-
-    private Integer maxNumber;
 }

@@ -1,13 +1,11 @@
 package com.jnxaread.controller;
 
-import com.jnxaread.bean.Chapter;
-import com.jnxaread.bean.Comment;
-import com.jnxaread.bean.Label;
-import com.jnxaread.bean.User;
+import com.jnxaread.bean.*;
 import com.jnxaread.bean.wrap.ChapterWrap;
 import com.jnxaread.bean.wrap.CommentWrap;
 import com.jnxaread.bean.wrap.FictionWrap;
 import com.jnxaread.entity.UnifiedResult;
+import com.jnxaread.entity.UserLevel;
 import com.jnxaread.model.ChapterModel;
 import com.jnxaread.model.CommentModel;
 import com.jnxaread.model.FictionModel;
@@ -35,6 +33,9 @@ public class LibraryController {
     @Autowired
     private LibraryService libraryService;
 
+    @Autowired
+    private UserLevel userLevel;
+
     /**
      * 分页获取用户作品列表
      *
@@ -44,8 +45,20 @@ public class LibraryController {
      * @return
      */
     @PostMapping("/list/fiction")
-    public UnifiedResult getFictionList(Integer userId, Integer level, Integer page) {
+    public UnifiedResult getFictionList(HttpSession session, Integer userId, Integer page) {
         if (userId == null || page == null) return UnifiedResult.build(400, "参数错误", null);
+
+        User user = (User) session.getAttribute("user");
+        Integer level;
+        if (user == null) {
+            level = 0;
+        } else {
+            if (user.getId() == userId) {
+                level = userLevel.getLevelArr()[userLevel.getLevelArr().length - 1];
+            } else {
+                level = user.getLevel();
+            }
+        }
 
         List<FictionWrap> fictionWrapList = libraryService.getFictionWrapList(userId, level, page);
 
@@ -100,8 +113,21 @@ public class LibraryController {
      * @return
      */
     @PostMapping("/list/chapter")
-    public UnifiedResult getChapterList(Integer fictionId, Integer level) {
+    public UnifiedResult getChapterList(HttpSession session, Integer fictionId) {
         if (fictionId == null) return UnifiedResult.build(400, "参数错误", null);
+
+        User user = (User) session.getAttribute("user");
+        Integer level;
+        if (user == null) {
+            level = 0;
+        } else {
+            Fiction fiction = libraryService.getFiction(fictionId);
+            if (user.getId().equals(fiction.getUserId())) {
+                level = userLevel.getLevelArr()[userLevel.getLevelArr().length - 1];
+            } else {
+                level = user.getLevel();
+            }
+        }
 
         List<Chapter> chapterList = libraryService.getChapterList(fictionId, level);
         List<ChapterModel> chapterModelList = new ArrayList<>();
@@ -289,11 +315,9 @@ public class LibraryController {
      * @return
      */
     @PostMapping("/list/comment")
-    public UnifiedResult getUserCommentList(Integer userId) {
-        if (userId == null) {
-            return UnifiedResult.build(400, "参数错误", null);
-        }
-        List<CommentWrap> commentWrapList = libraryService.getCommentWrapListByUserId(userId);
+    public UnifiedResult getUserCommentList(Integer userId, Integer level) {
+        if (userId == null) return UnifiedResult.build(400, "参数错误", null);
+        List<CommentWrap> commentWrapList = libraryService.getCommentWrapListByUserId(userId, level);
         List<CommentModel> commentModelList = new ArrayList<>();
         commentWrapList.forEach(commentWrap -> {
             CommentModel commentModel = ModelUtil.getCommentModel(commentWrap);
