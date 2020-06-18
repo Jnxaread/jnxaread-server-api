@@ -79,8 +79,8 @@ public class UserController {
         newLogin.setUserId(user.getId());
         newLogin.setCreateTime(new Date());
         //记录用户登录终端
-        String terminal = request.getParameter("terminal");
-        newLogin.setTerminal(terminal);
+//        String terminal = request.getParameter("terminal");
+        newLogin.setTerminal(request.getHeader("User-Agent"));
         newLogin.setSystem(0);
         userService.addLogin(newLogin);
 
@@ -223,6 +223,19 @@ public class UserController {
         //设置验证码的有效期为10分钟
         session.setMaxInactiveInterval(600);
         return UnifiedResult.ok();
+    }
+
+    /**
+     * 修改用户基础信息
+     *
+     * @param changedUser
+     * @return
+     */
+    @PostMapping("/change/baseInfo")
+    public UnifiedResult changeBaseInfo(User changedUser) {
+        userService.updateUser(changedUser);
+        User updatedUser = userService.getUser(changedUser.getId());
+        return UnifiedResult.ok(updatedUser);
     }
 
 }

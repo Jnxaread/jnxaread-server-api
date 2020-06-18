@@ -39,8 +39,8 @@ public class LibraryController {
     /**
      * 分页获取用户作品列表
      *
+     * @param session
      * @param userId
-     * @param level
      * @param page
      * @return
      */
@@ -53,7 +53,7 @@ public class LibraryController {
         if (user == null) {
             level = 0;
         } else {
-            if (user.getId() == userId) {
+            if (user.getId().equals(userId)) {
                 level = userLevel.getLevelArr()[userLevel.getLevelArr().length - 1];
             } else {
                 level = user.getLevel();
@@ -85,9 +85,7 @@ public class LibraryController {
      */
     @PostMapping("/list/fiction/own")
     public UnifiedResult getOwnFictionList(HttpSession session, Integer page) {
-        if (page == null) {
-            page = 1;
-        }
+        if (page == null) return UnifiedResult.build(400, "参数错误", null);
         User user = (User) session.getAttribute("user");
         List<FictionWrap> fictionWrapList = libraryService.getOwnFictionWrapList(user.getId(), page);
 
@@ -108,8 +106,8 @@ public class LibraryController {
     /**
      * 查看作品目录接口
      *
+     * @param session
      * @param fictionId
-     * @param level
      * @return
      */
     @PostMapping("/list/chapter")
@@ -315,8 +313,14 @@ public class LibraryController {
      * @return
      */
     @PostMapping("/list/comment")
-    public UnifiedResult getUserCommentList(Integer userId, Integer level) {
+    public UnifiedResult getUserCommentList(HttpSession session, Integer userId) {
         if (userId == null) return UnifiedResult.build(400, "参数错误", null);
+
+        User user = (User) session.getAttribute("user");
+        Integer level;
+        if (user == null) level = 0;
+        else level = user.getLevel();
+
         List<CommentWrap> commentWrapList = libraryService.getCommentWrapListByUserId(userId, level);
         List<CommentModel> commentModelList = new ArrayList<>();
         commentWrapList.forEach(commentWrap -> {

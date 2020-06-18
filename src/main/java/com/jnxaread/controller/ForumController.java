@@ -175,13 +175,7 @@ public class ForumController {
         User user = (User) session.getAttribute("user");
         Integer level;
         if (user == null) level = 0;
-        else {
-            if (user.getId().equals(userId)) {
-                level = userLevel.getLevelArr()[userLevel.getLevelArr().length - 1];
-            } else {
-                level = user.getLevel();
-            }
-        }
+        else level = user.getLevel();
 
         Map<String, Object> map = new HashMap<>();
         List<TopicWrap> topicWrapList = forumService.getTopicWrapList(level, page);
@@ -204,8 +198,8 @@ public class ForumController {
     /**
      * 获取用户的回复列表
      *
+     * @param session
      * @param userId
-     * @param level
      * @return
      */
     @PostMapping("/list/reply")
@@ -214,15 +208,8 @@ public class ForumController {
 
         User user = (User) session.getAttribute("user");
         Integer level;
-        if (user == null) {
-            level = 0;
-        } else {
-            if (user.getId().equals(userId)) {
-                level = userLevel.getLevelArr()[userLevel.getLevelArr().length - 1];
-            } else {
-                level = user.getLevel();
-            }
-        }
+        if (user == null) level = 0;
+        else level = user.getLevel();
 
         List<ReplyWrap> replyWrapList = forumService.getReplyWrapListByUserId(userId, level);
         List<ReplyModel> replyModelList = new ArrayList<>();

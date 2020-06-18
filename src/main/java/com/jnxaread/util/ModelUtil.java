@@ -21,9 +21,19 @@ public class ModelUtil {
     public static UserModel getUserModel(User user) {
         UserModel userModel = new UserModel();
         userModel.setId(user.getId());
+        userModel.setAccount(user.getAccount());
         userModel.setUsername(user.getUsername());
+        userModel.setEmail(user.getEmail());
+        userModel.setGender(user.getGender());
+        userModel.setFictionCount(user.getFictionCount());
+        userModel.setChapterCount(user.getChapterCount());
+        /*userModel.setCommentCount(user.getCommentCount());
+        userModel.setTopicCount(user.getTopicCount());
+        userModel.setReplyCount(user.getReplyCount());*/
         userModel.setLevel(user.getLevel());
+        userModel.setSignature(user.getSignature());
         userModel.setIntroduction(user.getIntroduction());
+        userModel.setCreateTime(user.getCreateTime());
         return userModel;
     }
 
