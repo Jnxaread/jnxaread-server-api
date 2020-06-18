@@ -31,6 +31,7 @@ public class ModelUtil {
         userModel.setTopicCount(user.getTopicCount());
         userModel.setReplyCount(user.getReplyCount());*/
         userModel.setLevel(user.getLevel());
+        userModel.setComeFrom(user.getComeFrom());
         userModel.setSignature(user.getSignature());
         userModel.setIntroduction(user.getIntroduction());
         userModel.setCreateTime(user.getCreateTime());

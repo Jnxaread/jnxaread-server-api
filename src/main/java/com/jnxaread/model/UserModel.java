@@ -35,6 +35,8 @@ public class UserModel {
 
     private Integer loginCount;*/
 
+    private String comeFrom;
+
     private String signature;
 
     private String introduction;

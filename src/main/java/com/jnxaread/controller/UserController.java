@@ -155,6 +155,11 @@ public class UserController {
             return UnifiedResult.build(400, "用户名已被注册", null);
         }
 
+        User emailVali = userService.getUserByEmail(newUser.getEmail());
+        if (emailVali != null) {
+            return UnifiedResult.build(400, "该邮箱已被绑定，无法注册", null);
+        }
+
         newUser.setCreateTime(new Date());
         User user = userService.addUser(newUser);
 
@@ -185,11 +190,6 @@ public class UserController {
         Matcher matcherEmail = patternEmail.matcher(email);
         if (!matcherEmail.matches()) {
             return UnifiedResult.build(400, "邮箱格式错误", null);
-        }
-
-        User emailVali = userService.getUserByEmail(email);
-        if (emailVali != null) {
-            return UnifiedResult.build(400, "该邮箱已被绑定，无法注册", null);
         }
 
         // 生成6位随机验证码
@@ -226,7 +226,7 @@ public class UserController {
     }
 
     /**
-     * 修改用户基础信息
+     * 修改用户基础信息接口
      *
      * @param changedUser
      * @return
@@ -236,6 +236,33 @@ public class UserController {
         userService.updateUser(changedUser);
         User updatedUser = userService.getUser(changedUser.getId());
         return UnifiedResult.ok(updatedUser);
+    }
+
+    /**
+     * 修改用户密码接口
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("/change/password")
+    public UnifiedResult changePassword(HttpServletRequest request) {
+        String oldPassword = request.getParameter("oldPassword");
+        String newPassword = request.getParameter("newPassword");
+        String emailCode = request.getParameter("emailCode");
+        if (oldPassword == null || newPassword == null || emailCode == null) {
+            return UnifiedResult.build(401, "参数错误", null);
+        }
+        HttpSession session = request.getSession();
+        if (!session.getAttribute("emailCode").equals(emailCode)) {
+            return UnifiedResult.build(420, "验证码错误", null);
+        }
+        User user = (User) session.getAttribute("user");
+        if (!user.getPassword().equals(oldPassword)) {
+            return UnifiedResult.build(420, "密码错误", null);
+        }
+        user.setPassword(newPassword);
+        userService.updateUser(user);
+        return UnifiedResult.ok();
     }
 
 }
