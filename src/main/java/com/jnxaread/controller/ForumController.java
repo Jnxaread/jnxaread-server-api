@@ -170,7 +170,7 @@ public class ForumController {
     @PostMapping("/list/topic")
     @ResponseBody
     public UnifiedResult getTopicList(HttpSession session, Integer userId, Integer page) {
-        if (page == null) return UnifiedResult.build(400, "参数错误", null);
+        if (userId == null || page == null) return UnifiedResult.build(400, "参数错误", null);
 
         User user = (User) session.getAttribute("user");
         Integer level;
@@ -178,7 +178,7 @@ public class ForumController {
         else level = user.getLevel();
 
         Map<String, Object> map = new HashMap<>();
-        List<TopicWrap> topicWrapList = forumService.getTopicWrapList(level, page);
+        List<TopicWrap> topicWrapList = forumService.getTopicWrapList(userId, level, page);
 
         /*
             将包装类中的一部分属性封装到响应实体模型中返回
