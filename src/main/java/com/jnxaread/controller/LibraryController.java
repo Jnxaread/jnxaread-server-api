@@ -167,6 +167,8 @@ public class LibraryController {
 
     /**
      * 创建章节接口
+     * 用户发布新章节需要调用此接口
+     * 此接口需要进行用户权限校验，只有作品的作者才能发表该作品的章节
      *
      * @param session
      * @param newChapter
@@ -175,7 +177,12 @@ public class LibraryController {
     @PostMapping("/new/chapter")
     public UnifiedResult createChapter(HttpSession session, ChapterWrap newChapter) {
         User user = (User) session.getAttribute("user");
-
+        //根据章节的作品id查询作品
+        Fiction fiction = libraryService.getFiction(newChapter.getFictionId());
+        //如果作品的作者id与当前登录用户的id不一致，则返回错误信息
+        if (!fiction.getUserId().equals(user.getId())) {
+            return UnifiedResult.build(405, "参数错误", null);
+        }
         newChapter.setUserId(user.getId());
         int wordCount = ContentUtil.getWordCount(newChapter.getContent());
         newChapter.setWordCount(wordCount);
@@ -348,11 +355,17 @@ public class LibraryController {
     @PostMapping("/edit/chapter")
     public UnifiedResult editChapter(HttpSession session, Chapter editedChapter) {
         User user = (User) session.getAttribute("user");
-        if (!user.getId().equals(editedChapter.getUserId())) {
+        Chapter chapter = libraryService.getChapter(editedChapter.getId());
+        if (!user.getId().equals(chapter.getUserId())) {
             return UnifiedResult.build(405, "参数错误", null);
         }
-        libraryService.updateChapter(editedChapter);
-        return UnifiedResult.ok(editedChapter);
+        Chapter updatedChapter = new Chapter();
+        updatedChapter.setId(editedChapter.getId());
+        updatedChapter.setTitle(editedChapter.getTitle());
+        updatedChapter.setContent(editedChapter.getContent());
+        updatedChapter.setRestricted(editedChapter.getRestricted());
+        libraryService.updateChapter(updatedChapter);
+        return UnifiedResult.ok(editedChapter.getId());
     }
 
 }

@@ -227,12 +227,18 @@ public class UserController {
 
     /**
      * 修改用户基础信息接口
+     * 此接口需要进行用户身份校验，
+     * 只有所修改的用户信息的id与当前登录用户id相同时才允许修改
      *
      * @param changedUser
      * @return
      */
     @PostMapping("/edit/baseInfo")
-    public UnifiedResult changeBaseInfo(User changedUser) {
+    public UnifiedResult changeBaseInfo(HttpSession session, User changedUser) {
+        User user = (User) session.getAttribute("user");
+        if (!user.getId().equals(changedUser.getId())) {
+            return UnifiedResult.build(400, "参数错误", null);
+        }
         userService.updateUser(changedUser);
         User updatedUser = userService.getUser(changedUser.getId());
         return UnifiedResult.ok(updatedUser);
@@ -240,6 +246,7 @@ public class UserController {
 
     /**
      * 修改用户密码接口
+     * 此接口必须进行密码校验和邮箱验证码校验
      *
      * @param request
      * @return
