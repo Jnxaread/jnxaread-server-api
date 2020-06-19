@@ -231,7 +231,7 @@ public class UserController {
      * @param changedUser
      * @return
      */
-    @PostMapping("/change/baseInfo")
+    @PostMapping("/edit/baseInfo")
     public UnifiedResult changeBaseInfo(User changedUser) {
         userService.updateUser(changedUser);
         User updatedUser = userService.getUser(changedUser.getId());
@@ -244,7 +244,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @PostMapping("/change/password")
+    @PostMapping("/edit/password")
     public UnifiedResult changePassword(HttpServletRequest request) {
         String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");

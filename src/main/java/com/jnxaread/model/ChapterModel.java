@@ -28,5 +28,7 @@ public class ChapterModel {
 
     private Integer viewCount;
 
+    private Integer restricted;
+
     private String content;
 }

@@ -79,9 +79,8 @@ public class ModelUtil {
         chapterModel.setWordCount(chapter.getWordCount());
         chapterModel.setCommentCount(chapter.getCommentCount());
         chapterModel.setViewCount(chapter.getViewCount());
-        if (chapter.getContent() != null) {
-            chapterModel.setContent(chapter.getContent());
-        }
+        chapterModel.setRestricted(chapter.getRestricted());
+        chapterModel.setContent(chapter.getContent());
         return chapterModel;
     }
 
@@ -95,18 +94,15 @@ public class ModelUtil {
         ChapterModel chapterModel = new ChapterModel();
         chapterModel.setId(chapterWrap.getId());
         chapterModel.setFictionId(chapterWrap.getFictionId());
-        if (chapterWrap.getUsername() != null) {
-            chapterModel.setAuthor(chapterWrap.getUsername());
-        }
+        chapterModel.setAuthor(chapterWrap.getUsername());
         chapterModel.setCreateTime(chapterWrap.getCreateTime());
         chapterModel.setNumber(chapterWrap.getNumber());
         chapterModel.setTitle(chapterWrap.getTitle());
         chapterModel.setWordCount(chapterWrap.getWordCount());
         chapterModel.setCommentCount(chapterWrap.getCommentCount());
         chapterModel.setViewCount(chapterWrap.getViewCount());
-        if (chapterWrap.getContent() != null) {
-            chapterModel.setContent(chapterWrap.getContent());
-        }
+        chapterModel.setRestricted(chapterWrap.getRestricted());
+        chapterModel.setContent(chapterWrap.getContent());
         return chapterModel;
     }
 

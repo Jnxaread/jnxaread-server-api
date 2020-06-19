@@ -235,28 +235,16 @@ public class LibraryController {
     }
 
     /**
-     * 根据作品id和章节号获取章节的简略信息
-     *
-     * @param fictionId
-     * @param number
-     * @return
-     */
-    @PostMapping("/brief/chapter")
-    public UnifiedResult getChapterBrief(Integer fictionId, Integer number) {
-        if (fictionId == null || number == null) return UnifiedResult.build(400, "参数错误", null);
-        Chapter chapter = libraryService.getChapterByNumber(fictionId, number);
-        ChapterModel chapterModel = ModelUtil.getChapterModel(chapter);
-        return UnifiedResult.ok(chapterModel);
-    }
-
-    /**
      * 查看章节详情接口
+     * 此接口返回章节详情和章节的评论列表；
+     * 此接口为用户阅读章节时调用；
+     * 此接口不需要进行权限校验。
      *
      * @param id
      * @return
      */
     @PostMapping("/detail/chapter")
-    public UnifiedResult getChapter(Integer id) {
+    public UnifiedResult getChapterDetail(Integer id) {
         if (id == null) return UnifiedResult.build(400, "参数错误", null);
         ChapterWrap chapterWrap = libraryService.getChapterWrap(id);
         if (chapterWrap == null) return UnifiedResult.build(400, "章节不存在", null);
@@ -273,6 +261,26 @@ public class LibraryController {
         map.put("comments", commentModelList);
 
         return UnifiedResult.ok(map);
+    }
+
+    /**
+     * 根据章节ID获取章节（包括content）接口
+     * 此接口用户修改章节时获取章节内容，需要对调用此接口的用户ID进行校验。
+     * 只有该章节的作者才能获取该章节。
+     *
+     * @param id
+     * @return
+     */
+    @PostMapping("/brief/chapter")
+    public UnifiedResult getChapter(HttpSession session, Integer id) {
+        if (id == null) return UnifiedResult.build(400, "参数错误", null);
+        User user = (User) session.getAttribute("user");
+        Chapter chapter = libraryService.getChapter(id);
+        if (!user.getId().equals(chapter.getUserId())) {
+            return UnifiedResult.build(400, "参数错误", null);
+        }
+        ChapterModel chapterModel = ModelUtil.getChapterModel(chapter);
+        return UnifiedResult.ok(chapterModel);
     }
 
     /**
@@ -328,6 +336,23 @@ public class LibraryController {
             commentModelList.add(commentModel);
         });
         return UnifiedResult.ok(commentModelList);
+    }
+
+    /**
+     * 修改章节接口
+     *
+     * @param session
+     * @param editedChapter
+     * @return
+     */
+    @PostMapping("/edit/chapter")
+    public UnifiedResult editChapter(HttpSession session, Chapter editedChapter) {
+        User user = (User) session.getAttribute("user");
+        if (!user.getId().equals(editedChapter.getUserId())) {
+            return UnifiedResult.build(405, "参数错误", null);
+        }
+        libraryService.updateChapter(editedChapter);
+        return UnifiedResult.ok(editedChapter);
     }
 
 }
