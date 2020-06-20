@@ -111,23 +111,18 @@ public class LibraryController {
      * @return
      */
     @PostMapping("/list/chapter")
-    public UnifiedResult getChapterList(HttpSession session, Integer fictionId) {
-        if (fictionId == null) return UnifiedResult.build(400, "参数错误", null);
-
-        User user = (User) session.getAttribute("user");
-        Integer level;
-        if (user == null) {
-            level = 0;
-        } else {
-            Fiction fiction = libraryService.getFiction(fictionId);
-            if (user.getId().equals(fiction.getUserId())) {
-                level = userLevel.getLevelArr()[userLevel.getLevelArr().length - 1];
-            } else {
-                level = user.getLevel();
-            }
+    public UnifiedResult getChapterList(HttpSession session, Integer fictionId, Integer type) {
+        if (fictionId == null || type == null || (type != 0 && type != 1)) {
+            return UnifiedResult.build(400, "参数错误", null);
         }
 
-        List<Chapter> chapterList = libraryService.getChapterList(fictionId, level);
+        User user = (User) session.getAttribute("user");
+        List<Chapter> chapterList;
+        if (type == 0 || user == null) {
+            chapterList = libraryService.getChapterList(fictionId, 0, 0);
+        } else {
+            chapterList = libraryService.getChapterList(fictionId, user.getId(), user.getLevel());
+        }
         List<ChapterModel> chapterModelList = new ArrayList<>();
         chapterList.forEach(chapter -> {
             ChapterModel chapterModel = ModelUtil.getChapterModel(chapter);
@@ -366,6 +361,59 @@ public class LibraryController {
         updatedChapter.setRestricted(editedChapter.getRestricted());
         libraryService.updateChapter(updatedChapter);
         return UnifiedResult.ok(editedChapter.getId());
+    }
+
+    /**
+     * 隐藏或显示章节接口
+     * 此接口需要进行身份校验
+     *
+     * @param session
+     * @param id
+     * @param hide
+     * @return
+     */
+    @PostMapping("/hide/chapter")
+    public UnifiedResult hideChapter(HttpSession session, Integer id, Boolean hide) {
+        if (id == null || hide == null) return UnifiedResult.build(400, "参数错误", null);
+        User user = (User) session.getAttribute("user");
+        int result = libraryService.hideChapter(id, user.getId(), hide);
+        switch (result) {
+            case 0:
+                return UnifiedResult.ok();
+            case 1:
+                return UnifiedResult.build(400, "章节不存在", null);
+            case 2:
+                return UnifiedResult.build(400, "参数错误", null);
+            case 3:
+                return UnifiedResult.build(400, "参数错误", null);
+            default:
+                return UnifiedResult.build(400, "未知错误", null);
+        }
+    }
+
+    /**
+     * 删除章节接口
+     * 此接口需要进行用户身份校验
+     *
+     * @param session
+     * @param id
+     * @return
+     */
+    @PostMapping("/delete/chapter")
+    public UnifiedResult deleteChapter(HttpSession session, Integer id) {
+        if (id == null) return UnifiedResult.build(400, "参数错误", null);
+        User user = (User) session.getAttribute("user");
+        int result = libraryService.deleteChapter(id, user.getId());
+        switch (result) {
+            case 0:
+                return UnifiedResult.ok();
+            case 1:
+                return UnifiedResult.build(400, "章节不存在", null);
+            case 2:
+                return UnifiedResult.build(400, "参数错误", null);
+            default:
+                return UnifiedResult.build(400, "未知错误", null);
+        }
     }
 
 }

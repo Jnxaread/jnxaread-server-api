@@ -81,6 +81,7 @@ public class ModelUtil {
         chapterModel.setViewCount(chapter.getViewCount());
         chapterModel.setRestricted(chapter.getRestricted());
         chapterModel.setContent(chapter.getContent());
+        chapterModel.setHided(chapter.getHided());
         return chapterModel;
     }
 

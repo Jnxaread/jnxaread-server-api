@@ -22,7 +22,7 @@ public class AccessTimerTask {
     @Autowired
     private ServletContext context;
 
-    @Scheduled(cron = " 0 0/15 * * * ? ")
+    @Scheduled(cron = " 0 0/6 * * * ? ")
     public void saveAccessCount() {
 
         Integer totalAccess = (Integer) context.getAttribute("totalAccess");

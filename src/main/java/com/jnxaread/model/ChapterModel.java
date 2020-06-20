@@ -31,4 +31,6 @@ public class ChapterModel {
     private Integer restricted;
 
     private String content;
+
+    private Boolean hided;
 }
