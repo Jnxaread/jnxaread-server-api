@@ -4,6 +4,7 @@ import com.jnxaread.model.NoticeModel;
 import com.jnxaread.bean.wrap.NoticeWrap;
 import com.jnxaread.entity.UnifiedResult;
 import com.jnxaread.service.NoticeService;
+import com.jnxaread.util.ModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +29,7 @@ public class NoticeController {
 
         ArrayList<NoticeModel> noticeModelList = new ArrayList<>();
         noticeWrapList.forEach(noticeWrap -> {
-            NoticeModel noticeModel = getNoticeModel(noticeWrap);
+            NoticeModel noticeModel = ModelUtil.getNoticeModel(noticeWrap);
             noticeModelList.add(noticeModel);
         });
 
@@ -45,30 +46,8 @@ public class NoticeController {
             return UnifiedResult.build(400, "公告不存在", null);
         }
 
-        NoticeModel noticeModel = getNoticeModel(noticeWrap);
+        NoticeModel noticeModel = ModelUtil.getNoticeModel(noticeWrap);
         return UnifiedResult.ok(noticeModel);
-    }
-
-    /**
-     * 将NoticeWrap封装到NoticeModel中
-     *
-     * @param noticeWrap
-     * @return
-     */
-    public NoticeModel getNoticeModel(NoticeWrap noticeWrap) {
-        NoticeModel noticeModel = new NoticeModel();
-        noticeModel.setId(noticeWrap.getId());
-        noticeModel.setLabel(noticeWrap.getLabel());
-        noticeModel.setTitle(noticeWrap.getTitle());
-        if (noticeWrap.getContent() != null) {
-            noticeModel.setContent(noticeWrap.getContent());
-        }
-        noticeModel.setUsername(noticeWrap.getUsername());
-        noticeModel.setCreateTime(noticeWrap.getCreateTime());
-        noticeModel.setLastEdit(noticeWrap.getLastEdit());
-        noticeModel.setLastTime(noticeWrap.getLastTime());
-        noticeModel.setViewCount(noticeWrap.getViewCount());
-        return noticeModel;
     }
 
 }

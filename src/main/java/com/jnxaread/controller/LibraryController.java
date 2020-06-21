@@ -6,6 +6,7 @@ import com.jnxaread.bean.wrap.CommentWrap;
 import com.jnxaread.bean.wrap.FictionWrap;
 import com.jnxaread.entity.UnifiedResult;
 import com.jnxaread.entity.UserLevel;
+import com.jnxaread.model.CategoryModel;
 import com.jnxaread.model.ChapterModel;
 import com.jnxaread.model.CommentModel;
 import com.jnxaread.model.FictionModel;
@@ -129,6 +130,23 @@ public class LibraryController {
             chapterModelList.add(chapterModel);
         });
         return UnifiedResult.ok(chapterModelList);
+    }
+
+    /**
+     * 获取所有作品类别接口
+     * 该接口不需要进行权限校验
+     *
+     * @return
+     */
+    @PostMapping("/list/category")
+    public UnifiedResult getCategoryList() {
+        List<Category> categoryList = libraryService.getCategoryList();
+        List<CategoryModel> categoryModelList = new ArrayList<>();
+        categoryList.forEach(category -> {
+            CategoryModel categoryModel = ModelUtil.getCategoryModel(category);
+            categoryModelList.add(categoryModel);
+        });
+        return UnifiedResult.ok(categoryModelList);
     }
 
     /**

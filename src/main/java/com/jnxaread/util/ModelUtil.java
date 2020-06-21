@@ -1,5 +1,6 @@
 package com.jnxaread.util;
 
+import com.jnxaread.bean.Category;
 import com.jnxaread.bean.Chapter;
 import com.jnxaread.bean.Reply;
 import com.jnxaread.bean.User;
@@ -187,6 +188,39 @@ public class ModelUtil {
             replyModel.setTopicTitle(replyWrap.getTopicTitle());
         }
         return replyModel;
+    }
+
+    /**
+     * 将NoticeWrap封装到NoticeModel中
+     *
+     * @param noticeWrap
+     * @return
+     */
+    public static NoticeModel getNoticeModel(NoticeWrap noticeWrap) {
+        NoticeModel noticeModel = new NoticeModel();
+        noticeModel.setId(noticeWrap.getId());
+        noticeModel.setLabel(noticeWrap.getLabel());
+        noticeModel.setTitle(noticeWrap.getTitle());
+        noticeModel.setContent(noticeWrap.getContent());
+        noticeModel.setUsername(noticeWrap.getUsername());
+        noticeModel.setCreateTime(noticeWrap.getCreateTime());
+        noticeModel.setLastEdit(noticeWrap.getLastEdit());
+        noticeModel.setLastTime(noticeWrap.getLastTime());
+        noticeModel.setViewCount(noticeWrap.getViewCount());
+        return noticeModel;
+    }
+
+    /**
+     * 将Category封装到CategoryModel中
+     *
+     * @param category
+     * @return
+     */
+    public static CategoryModel getCategoryModel(Category category) {
+        CategoryModel categoryModel = new CategoryModel();
+        categoryModel.setId(category.getId());
+        categoryModel.setName(category.getName());
+        return categoryModel;
     }
 
 }
