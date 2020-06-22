@@ -108,24 +108,18 @@ public class LibraryController {
      * 首页最新更新作品查询接口
      *
      * @param session
-     * @param userId
      * @return
      */
     @PostMapping("/list/fiction/latest")
-    public UnifiedResult getLatestFictionList(HttpSession session, Integer userId) {
-        if (userId == null) return UnifiedResult.build(400, "参数错误", null);
+    public UnifiedResult getLatestFictionList(HttpSession session) {
         User user = (User) session.getAttribute("user");
         Integer level;
         if (user == null) {
             level = 0;
         } else {
-            if (user.getId().equals(userId)) {
-                level = userLevel.getLevelArr()[userLevel.getLevelArr().length - 1];
-            } else {
-                level = user.getLevel();
-            }
+            level = user.getLevel();
         }
-        List<FictionWrap> fictionWrapList = libraryService.getFictionWrapList(userId, level, 1, 3);
+        List<FictionWrap> fictionWrapList = libraryService.getFictionWrapList(0, level, 1, 3);
         ArrayList<FictionModel> fictionModelList = new ArrayList<>();
         fictionWrapList.forEach(fictionWrap -> {
             FictionModel fictionModel = ModelUtil.getFictionModel(fictionWrap);

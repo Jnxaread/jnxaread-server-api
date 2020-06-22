@@ -178,7 +178,7 @@ public class ForumController {
         else level = user.getLevel();
 
         Map<String, Object> map = new HashMap<>();
-        List<TopicWrap> topicWrapList = forumService.getTopicWrapList(userId, level, page);
+        List<TopicWrap> topicWrapList = forumService.getTopicWrapList(userId, level, page, 45);
 
         /*
             将包装类中的一部分属性封装到响应实体模型中返回
@@ -193,6 +193,30 @@ public class ForumController {
         map.put("topicList", topicModelList);
         map.put("topicCount", topicCount);
         return UnifiedResult.ok(map);
+    }
+
+    /**
+     * 获取最新更新的帖子接口
+     *
+     * @param session
+     * @return
+     */
+    @PostMapping("/list/topic/latest")
+    public UnifiedResult getLatestTopicList(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        Integer level;
+        if (user == null) {
+            level = 0;
+        } else {
+            level = user.getLevel();
+        }
+        List<TopicWrap> topicWrapList = forumService.getTopicWrapList(0, level, 1, 3);
+        ArrayList<TopicModel> topicModelList = new ArrayList<>();
+        topicWrapList.forEach(topicWrap -> {
+            TopicModel topicModel = ModelUtil.getTopicModel(topicWrap);
+            topicModelList.add(topicModel);
+        });
+        return UnifiedResult.ok(topicModelList);
     }
 
     /**
