@@ -53,6 +53,11 @@ public class ForumController {
             return UnifiedResult.build(400, "您已被封禁，无法发帖", null);
         }
 
+        //论坛模块上线版块系统后删除这项检查
+        if (!newTopic.getBoardId().equals(1)) {
+            return UnifiedResult.build(400, "参数错误", null);
+        }
+
         String regLabel = "^[\\u4e00-\\u9fa5]{2,4}$";
         Pattern pattern = Pattern.compile(regLabel);
         Matcher matcher = pattern.matcher(newTopic.getLabel());
