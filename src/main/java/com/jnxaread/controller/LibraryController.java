@@ -191,6 +191,11 @@ public class LibraryController {
         if (tags != null) {
             //遍历标签数组，将每个标签封装成标签对象写入数据库中
             for (String tag : tags) {
+                if (tag.length() > 11) {
+                    return UnifiedResult.build(406, "参数错误", null);
+                } else if (tag.contains(" ")) {
+                    return UnifiedResult.build(407, "参数错误", null);
+                }
                 Label label = new Label();
                 label.setFictionId(fictionId);
                 label.setUserId(user.getId());
