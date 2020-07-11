@@ -81,6 +81,7 @@ public class ForumController {
 
         //设置帖子作者id
         newTopic.setUserId(user.getId());
+        newTopic.setBoardId(1);
         //设置发布时间
         newTopic.setCreateTime(new Date());
         //将帖子写入数据库
