@@ -136,14 +136,14 @@ public class LibraryController {
      * @return
      */
     @PostMapping("/list/chapter")
-    public UnifiedResult getChapterList(HttpSession session, Integer fictionId, Integer type) {
-        if (fictionId == null || type == null || (type != 0 && type != 1)) {
+    public UnifiedResult getChapterList(HttpSession session, Integer fictionId) {
+        if (fictionId == null) {
             return UnifiedResult.build(400, "参数错误", null);
         }
 
         User user = (User) session.getAttribute("user");
         List<Chapter> chapterList;
-        if (type == 0 || user == null) {
+        if (user == null) {
             chapterList = libraryService.getChapterList(fictionId, 0, 0);
         } else {
             chapterList = libraryService.getChapterList(fictionId, user.getId(), user.getLevel());
