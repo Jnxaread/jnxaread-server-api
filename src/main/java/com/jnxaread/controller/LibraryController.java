@@ -313,6 +313,33 @@ public class LibraryController {
     }
 
     /**
+     * 根据章节号获取章节详情
+     *
+     * @param fictionId
+     * @param number
+     * @return
+     */
+    @PostMapping("/detail/chapter/number")
+    public UnifiedResult getChapterByNumber(Integer fictionId, Integer number) {
+        if (fictionId == null || number == null) {
+            return UnifiedResult.build(400, "参数错误", null);
+        }
+        ChapterWrap chapterWrap = libraryService.getChapterWrapByNumber(fictionId, number);
+        ChapterModel chapterModel = ModelUtil.getChapterModel(chapterWrap);
+        List<CommentWrap> commentWrapList = libraryService.getCommentWrapList(chapterWrap.getId());
+        List<CommentModel> commentModelList = new ArrayList<>();
+        commentWrapList.forEach(commentWrap -> {
+            CommentModel commentModel = ModelUtil.getCommentModel(commentWrap);
+            commentModelList.add(commentModel);
+        });
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("chapter", chapterModel);
+        map.put("comments", commentModelList);
+        return UnifiedResult.ok(map);
+    }
+
+    /**
      * 根据章节ID获取章节（包括content）接口
      * 此接口用户修改章节时获取章节内容，需要对调用此接口的用户ID进行校验。
      * 只有该章节的作者才能获取该章节。
