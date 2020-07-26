@@ -131,9 +131,9 @@ public class LibraryController {
     /**
      * 查看作品目录接口
      *
-     * @param session
-     * @param fictionId
-     * @return
+     * @param session 请求的session
+     * @param fictionId 作品ID
+     * @return 统一响应结构
      */
     @PostMapping("/list/chapter")
     public UnifiedResult getChapterList(HttpSession session, Integer fictionId) {
@@ -160,7 +160,7 @@ public class LibraryController {
      * 获取所有作品类别接口
      * 该接口不需要进行权限校验
      *
-     * @return
+     * @return 统一响应结构
      */
     @PostMapping("/list/category")
     public UnifiedResult getCategoryList() {
