@@ -13,11 +13,11 @@ import com.jnxaread.model.FictionModel;
 import com.jnxaread.service.LibraryService;
 import com.jnxaread.util.ContentUtil;
 import com.jnxaread.util.ModelUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.util.*;
 
@@ -31,19 +31,19 @@ import java.util.*;
 @RequestMapping("/library")
 public class LibraryController {
 
-    @Autowired
+    @Resource
     private LibraryService libraryService;
 
-    @Autowired
+    @Resource
     private UserLevel userLevel;
 
     /**
      * 分页获取用户作品列表
      *
-     * @param session
-     * @param userId
-     * @param page
-     * @return
+     * @param session 请求的session
+     * @param userId 用户ID
+     * @param page 页码
+     * @return 统一响应结构，包含作品列表及作品数量数据
      */
     @PostMapping("/list/fiction")
     public UnifiedResult getFictionList(HttpSession session, Integer userId, Integer page) {
@@ -80,9 +80,9 @@ public class LibraryController {
     /**
      * 分页获取我的作品列表接口
      *
-     * @param session
-     * @param page
-     * @return
+     * @param session 请求的session
+     * @param page 页码
+     * @return 统一响应结构，包含作品列表及作品数量数据
      */
     @PostMapping("/list/fiction/own")
     public UnifiedResult getOwnFictionList(HttpSession session, Integer page) {
@@ -107,8 +107,8 @@ public class LibraryController {
     /**
      * 首页最新更新作品查询接口
      *
-     * @param session
-     * @return
+     * @param session 请求的session
+     * @return 统一响应结构，包含最新更新作品列表数据
      */
     @PostMapping("/list/fiction/latest")
     public UnifiedResult getLatestFictionList(HttpSession session) {
@@ -133,7 +133,7 @@ public class LibraryController {
      *
      * @param session 请求的session
      * @param fictionId 作品ID
-     * @return 统一响应结构
+     * @return 统一响应结构，包含章节列表数据
      */
     @PostMapping("/list/chapter")
     public UnifiedResult getChapterList(HttpSession session, Integer fictionId) {
@@ -160,7 +160,7 @@ public class LibraryController {
      * 获取所有作品类别接口
      * 该接口不需要进行权限校验
      *
-     * @return 统一响应结构
+     * @return 统一响应结构，包含类别列表数据
      */
     @PostMapping("/list/category")
     public UnifiedResult getCategoryList() {
@@ -176,9 +176,9 @@ public class LibraryController {
     /**
      * 创建作品接口
      *
-     * @param session
-     * @param newFiction
-     * @return
+     * @param session 请求的session
+     * @param newFiction 新增作品信息
+     * @return 统一响应结构，包含新增作品的id
      */
     @PostMapping("/new/fiction")
     public UnifiedResult createFiction(HttpSession session, FictionWrap newFiction) {
@@ -212,9 +212,9 @@ public class LibraryController {
      * 用户发布新章节需要调用此接口
      * 此接口需要进行用户权限校验，只有作品的作者才能发表该作品的章节
      *
-     * @param session
-     * @param newChapter
-     * @return
+     * @param session 请求的session
+     * @param newChapter 新增章节信息
+     * @return 统一响应结构，包含新增章节的id
      */
     @PostMapping("/new/chapter")
     public UnifiedResult createChapter(HttpSession session, ChapterWrap newChapter) {
