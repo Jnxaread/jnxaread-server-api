@@ -41,8 +41,8 @@ public class LibraryController {
      * 分页获取用户作品列表
      *
      * @param session 请求的session
-     * @param userId 用户ID
-     * @param page 页码
+     * @param userId  用户ID
+     * @param page    页码
      * @return 统一响应结构，包含作品列表及作品数量数据
      */
     @PostMapping("/list/fiction")
@@ -81,7 +81,7 @@ public class LibraryController {
      * 分页获取我的作品列表接口
      *
      * @param session 请求的session
-     * @param page 页码
+     * @param page    页码
      * @return 统一响应结构，包含作品列表及作品数量数据
      */
     @PostMapping("/list/fiction/own")
@@ -131,7 +131,7 @@ public class LibraryController {
     /**
      * 查看作品目录接口
      *
-     * @param session 请求的session
+     * @param session   请求的session
      * @param fictionId 作品ID
      * @return 统一响应结构，包含章节列表数据
      */
@@ -176,7 +176,7 @@ public class LibraryController {
     /**
      * 创建作品接口
      *
-     * @param session 请求的session
+     * @param session    请求的session
      * @param newFiction 新增作品信息
      * @return 统一响应结构，包含新增作品的id
      */
@@ -212,7 +212,7 @@ public class LibraryController {
      * 用户发布新章节需要调用此接口
      * 此接口需要进行用户权限校验，只有作品的作者才能发表该作品的章节
      *
-     * @param session 请求的session
+     * @param session    请求的session
      * @param newChapter 新增章节信息
      * @return 统一响应结构，包含新增章节的id
      */
@@ -242,12 +242,11 @@ public class LibraryController {
     /**
      * 查看作品详情接口
      *
-     * @param id
-     * @param page
-     * @return
+     * @param id 作品id
+     * @return 统一响应结构，包含作品详情信息和评论列表
      */
     @PostMapping("/detail/fiction")
-    public UnifiedResult getFiction(Integer id, Integer page) {
+    public UnifiedResult getFiction(Integer id) {
         if (id == null) {
             return UnifiedResult.build(400, "参数错误", null);
         }
@@ -272,8 +271,8 @@ public class LibraryController {
     /**
      * 获取作品简要信息接口
      *
-     * @param id
-     * @return
+     * @param id 作品id
+     * @return 统一响应结构，包含作品简略信息数据
      */
     @PostMapping("/brief/fiction")
     public UnifiedResult getFictionBrief(Integer id) {
@@ -289,8 +288,8 @@ public class LibraryController {
      * 此接口为用户阅读章节时调用；
      * 此接口不需要进行权限校验。
      *
-     * @param id
-     * @return
+     * @param id 章节id
+     * @return 统一响应结构，包含章节详情信息和评论列表
      */
     @PostMapping("/detail/chapter")
     public UnifiedResult getChapterDetail(Integer id) {
@@ -315,9 +314,9 @@ public class LibraryController {
     /**
      * 根据章节号获取章节详情
      *
-     * @param fictionId
-     * @param number
-     * @return
+     * @param fictionId 作品id
+     * @param number 章节号
+     * @return 统一响应结构，包含章节详情信息和评论列表数据
      */
     @PostMapping("/detail/chapter/number")
     public UnifiedResult getChapterByNumber(Integer fictionId, Integer number) {
@@ -344,8 +343,8 @@ public class LibraryController {
      * 此接口用户修改章节时获取章节内容，需要对调用此接口的用户ID进行校验。
      * 只有该章节的作者才能获取该章节。
      *
-     * @param id
-     * @return
+     * @param id 章节id
+     * @return 统一响应结构，包含章节详情数据
      */
     @PostMapping("/brief/chapter")
     public UnifiedResult getChapter(HttpSession session, Integer id) {
@@ -362,8 +361,8 @@ public class LibraryController {
     /**
      * 发表评论接口
      *
-     * @param newComment
-     * @return
+     * @param newComment 评论参数
+     * @return 统一响应结构
      */
     @PostMapping("/new/comment")
     public UnifiedResult addComment(HttpSession session, Comment newComment) {
@@ -393,8 +392,8 @@ public class LibraryController {
     /**
      * 获取用户评论列表
      *
-     * @param userId
-     * @return
+     * @param userId 用户id
+     * @return 统一响应结构，包含用户评论列表
      */
     @PostMapping("/list/comment")
     public UnifiedResult getUserCommentList(HttpSession session, Integer userId) {
@@ -417,9 +416,9 @@ public class LibraryController {
     /**
      * 修改章节接口
      *
-     * @param session
-     * @param editedChapter
-     * @return
+     * @param session 请求的session
+     * @param editedChapter 被更新过的章节数据
+     * @return 统一响应结构，包含章节id数据
      */
     @PostMapping("/edit/chapter")
     public UnifiedResult editChapter(HttpSession session, Chapter editedChapter) {
@@ -441,10 +440,10 @@ public class LibraryController {
      * 隐藏或显示章节接口
      * 此接口需要进行身份校验
      *
-     * @param session
-     * @param id
-     * @param hide
-     * @return
+     * @param session 请求的session
+     * @param id 章节id
+     * @param hide 是否隐藏
+     * @return 统一响应结构
      */
     @PostMapping("/hide/chapter")
     public UnifiedResult hideChapter(HttpSession session, Integer id, Boolean hide) {
@@ -469,9 +468,9 @@ public class LibraryController {
      * 删除章节接口
      * 此接口需要进行用户身份校验
      *
-     * @param session
-     * @param id
-     * @return
+     * @param session 请求的session
+     * @param id 章节id
+     * @return 统一响应结构
      */
     @PostMapping("/delete/chapter")
     public UnifiedResult deleteChapter(HttpSession session, Integer id) {
