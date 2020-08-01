@@ -175,6 +175,9 @@ public class LibraryController {
 
     /**
      * 创建作品接口
+     * 用户新建作品需要调用此接口
+     * 调用此接口需要用户具有登录权限
+     * 【标签】
      *
      * @param session    请求的session
      * @param newFiction 新增作品信息
@@ -191,6 +194,7 @@ public class LibraryController {
         if (tags != null) {
             //遍历标签数组，将每个标签封装成标签对象写入数据库中
             for (String tag : tags) {
+                //考虑到存在英文标签的情况，所以对于标签中的空格不进行处理
                 if (tag.length() > 11) {
                     return UnifiedResult.build(406, "参数错误", null);
                 } else if (tag.contains(" ")) {
@@ -315,7 +319,7 @@ public class LibraryController {
      * 根据章节号获取章节详情
      *
      * @param fictionId 作品id
-     * @param number 章节号
+     * @param number    章节号
      * @return 统一响应结构，包含章节详情信息和评论列表数据
      */
     @PostMapping("/detail/chapter/number")
@@ -416,7 +420,7 @@ public class LibraryController {
     /**
      * 修改章节接口
      *
-     * @param session 请求的session
+     * @param session       请求的session
      * @param editedChapter 被更新过的章节数据
      * @return 统一响应结构，包含章节id数据
      */
@@ -441,8 +445,8 @@ public class LibraryController {
      * 此接口需要进行身份校验
      *
      * @param session 请求的session
-     * @param id 章节id
-     * @param hide 是否隐藏
+     * @param id      章节id
+     * @param hide    是否隐藏
      * @return 统一响应结构
      */
     @PostMapping("/hide/chapter")
@@ -469,7 +473,7 @@ public class LibraryController {
      * 此接口需要进行用户身份校验
      *
      * @param session 请求的session
-     * @param id 章节id
+     * @param id      章节id
      * @return 统一响应结构
      */
     @PostMapping("/delete/chapter")
