@@ -260,7 +260,7 @@ public class LibraryController {
         FictionModel fictionModel = ModelUtil.getFictionModel(fictionWrap);
         fictionMap.put("fiction", fictionModel);
 
-        Chapter chapter0 = libraryService.getChapterByNumber(id, 0);
+        Chapter chapter0 = libraryService.getChapterByNumber(id, -1);
         List<CommentWrap> commentWrapList = libraryService.getCommentWrapList(chapter0.getId());
         ArrayList<CommentModel> commentModelList = new ArrayList<>();
         commentWrapList.forEach(commentWrap -> {
@@ -364,21 +364,31 @@ public class LibraryController {
 
     /**
      * 发表评论接口
+     * 【评论】
      *
      * @param newComment 评论参数
      * @return 统一响应结构
      */
     @PostMapping("/new/comment")
     public UnifiedResult addComment(HttpSession session, Comment newComment) {
+        if (newComment.getFictionId() == null) {
+            return UnifiedResult.build(400, "参数错误", null);
+        }
         User user = (User) session.getAttribute("user");
-        if (newComment.getFictionId() == null && newComment.getChapterId() != null) {
-            Chapter chapter = libraryService.getChapter(newComment.getChapterId());
-            newComment.setFictionId(chapter.getFictionId());
-        } else if (newComment.getFictionId() != null && newComment.getChapterId() == null) {
-            Chapter chapter0 = libraryService.getChapterByNumber(newComment.getFictionId(), 0);
+        Fiction fiction = libraryService.getFiction(newComment.getFictionId());
+        //如果用户等级低于作品的限制等级，则返回错误信息
+        if (user.getLevel() < fiction.getRestricted()) {
+            return UnifiedResult.build(400, "参数错误", null);
+        }
+        if (newComment.getChapterId() == null) {
+            Chapter chapter0 = libraryService.getChapterByNumber(newComment.getFictionId(), -1);
             newComment.setChapterId(chapter0.getId());
         } else {
-            return UnifiedResult.build(400, "参数错误", null);
+            Chapter chapter = libraryService.getChapter(newComment.getChapterId());
+            //如果章节id和作品id不匹配或者用户等级低于章节的限制等级，则返回错误信息
+            if (!chapter.getFictionId().equals(newComment.getFictionId())||user.getLevel() < chapter.getRestricted()) {
+                return UnifiedResult.build(400, "参数错误", null);
+            }
         }
         newComment.setUserId(user.getId());
         newComment.setCreateTime(new Date());
