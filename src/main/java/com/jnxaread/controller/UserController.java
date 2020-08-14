@@ -8,7 +8,6 @@ import com.jnxaread.entity.UnifiedResult;
 import com.jnxaread.model.UserModel;
 import com.jnxaread.service.UserService;
 import com.jnxaread.util.ModelUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
@@ -33,10 +33,10 @@ import java.util.regex.Pattern;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
+    @Resource
     private UserService userService;
 
-    @Autowired(required = false)
+    @Resource
     private JavaMailSender javaMailSender;
 
     @Value("${spring.mail.username}")
@@ -52,8 +52,8 @@ public class UserController {
     /**
      * 用户登录接口
      *
-     * @param request
-     * @return
+     * @param request 请求request对象
+     * @return 返回登录用户的信息
      */
     @PostMapping("/signIn")
     public UnifiedResult signIn(HttpServletRequest request) {
@@ -88,6 +88,12 @@ public class UserController {
         return UnifiedResult.ok(userModel);
     }
 
+    /**
+     * 用户退出登录接口
+     *
+     * @param session 请求session对象
+     * @return 返回成功信息
+     */
     @PostMapping("/logout")
     public UnifiedResult logout(HttpSession session) {
         session.removeAttribute("user");
@@ -96,10 +102,11 @@ public class UserController {
 
     /**
      * 用户注册接口
+     * 用户信息写入数据库后自动登录并返回用户信息
      *
-     * @param request
-     * @param newUser
-     * @return
+     * @param request 请求request对象
+     * @param newUser 注册用户表单数据
+     * @return 返回用户信息
      */
     @PostMapping("/signUp")
     public UnifiedResult signUp(HttpServletRequest request, UserWrap newUser) {
@@ -174,9 +181,9 @@ public class UserController {
     /**
      * 生成6位邮件验证码
      *
-     * @param session
-     * @param email
-     * @return
+     * @param session 请求session对象
+     * @param email   目标邮箱地址
+     * @return 返回执行结果
      */
     @PostMapping("/emailCode")
     public UnifiedResult getEmailCode(HttpSession session, String email) {
@@ -230,8 +237,8 @@ public class UserController {
      * 此接口需要进行用户身份校验，
      * 只有所修改的用户信息的id与当前登录用户id相同时才允许修改
      *
-     * @param changedUser
-     * @return
+     * @param changedUser 修改后的用户数据
+     * @return 如果成功，返回更新后的用户数据
      */
     @PostMapping("/edit/baseInfo")
     public UnifiedResult changeBaseInfo(HttpSession session, User changedUser) {
@@ -248,8 +255,8 @@ public class UserController {
      * 修改用户密码接口
      * 此接口必须进行密码校验和邮箱验证码校验
      *
-     * @param request
-     * @return
+     * @param request 请求request对象
+     * @return 返回执行结果信息
      */
     @PostMapping("/edit/password")
     public UnifiedResult changePassword(HttpServletRequest request) {

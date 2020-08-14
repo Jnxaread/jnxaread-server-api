@@ -12,12 +12,12 @@ import com.jnxaread.model.TopicModel;
 import com.jnxaread.service.ForumService;
 import com.jnxaread.util.ContentUtil;
 import com.jnxaread.util.ModelUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -33,18 +33,18 @@ import java.util.regex.Pattern;
 @RequestMapping("/forum")
 public class ForumController {
 
-    @Autowired
+    @Resource
     private ForumService forumService;
 
-    @Autowired
+    @Resource
     private UserLevel userLevel;
 
     /**
      * 发帖
      *
-     * @param session
-     * @param newTopic
-     * @return
+     * @param session 请求session对象
+     * @param newTopic 新帖子表单数据
+     * @return 返回执行结果信息及新帖子id
      */
     @PostMapping("/new/topic")
     public UnifiedResult submitTopic(HttpSession session, Topic newTopic) {

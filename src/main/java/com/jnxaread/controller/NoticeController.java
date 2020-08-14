@@ -1,14 +1,14 @@
 package com.jnxaread.controller;
 
-import com.jnxaread.model.NoticeModel;
 import com.jnxaread.bean.wrap.NoticeWrap;
 import com.jnxaread.entity.UnifiedResult;
+import com.jnxaread.model.NoticeModel;
 import com.jnxaread.service.NoticeService;
 import com.jnxaread.util.ModelUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping("/forum")
 public class NoticeController {
 
-    @Autowired
+    @Resource
     private NoticeService noticeService;
 
     @RequestMapping("/list/notice")
