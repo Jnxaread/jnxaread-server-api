@@ -6,7 +6,6 @@ import com.jnxaread.bean.User;
 import com.jnxaread.bean.wrap.ReplyWrap;
 import com.jnxaread.bean.wrap.TopicWrap;
 import com.jnxaread.entity.UnifiedResult;
-import com.jnxaread.entity.UserLevel;
 import com.jnxaread.model.ReplyModel;
 import com.jnxaread.model.TopicModel;
 import com.jnxaread.service.ForumService;
@@ -36,13 +35,10 @@ public class ForumController {
     @Resource
     private ForumService forumService;
 
-    @Resource
-    private UserLevel userLevel;
-
     /**
      * 发帖
      *
-     * @param session 请求session对象
+     * @param session  请求session对象
      * @param newTopic 新帖子表单数据
      * @return 返回执行结果信息及新帖子id
      */
@@ -93,9 +89,9 @@ public class ForumController {
     /**
      * 回复
      *
-     * @param session
-     * @param newReply
-     * @return
+     * @param session  请求session对象
+     * @param newReply 新回复表单数据
+     * @return 执行结果
      */
     @PostMapping("/new/reply")
     public UnifiedResult submitReply(HttpSession session, Reply newReply) {
@@ -133,10 +129,11 @@ public class ForumController {
     }
 
     /**
-     * 获取帖子详情
+     * 获取帖子详情接口
      *
-     * @param id
-     * @return
+     * @param id   帖子id
+     * @param page 帖子回复页码
+     * @return 帖子、回复列表和回复总数
      */
     @PostMapping("/detail/topic")
     public UnifiedResult getTopic(Integer id, Integer page) {
@@ -169,9 +166,12 @@ public class ForumController {
     }
 
     /**
-     * 获取帖子列表
+     * 获取帖子列表接口
      *
-     * @return
+     * @param session 请求session对象
+     * @param userId  用户id
+     * @param page    列表页码
+     * @return 帖子列表和帖子总数
      */
     @PostMapping("/list/topic")
     @ResponseBody
@@ -204,8 +204,8 @@ public class ForumController {
     /**
      * 获取最新更新的帖子接口
      *
-     * @param session
-     * @return
+     * @param session 请求session对象
+     * @return 最新更新帖子列表
      */
     @PostMapping("/list/topic/latest")
     public UnifiedResult getLatestTopicList(HttpSession session) {
@@ -228,9 +228,9 @@ public class ForumController {
     /**
      * 获取用户的回复列表
      *
-     * @param session
-     * @param userId
-     * @return
+     * @param session 请求session对象
+     * @param userId  用户id
+     * @return 用户回复列表
      */
     @PostMapping("/list/reply")
     public UnifiedResult getUserReplyList(HttpSession session, Integer userId) {

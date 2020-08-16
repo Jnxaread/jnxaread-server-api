@@ -23,6 +23,11 @@ public class NoticeController {
     @Resource
     private NoticeService noticeService;
 
+    /**
+     * 获取公告列表接口
+     *
+     * @return 公告列表
+     */
     @RequestMapping("/list/notice")
     public UnifiedResult getNoticeList() {
         List<NoticeWrap> noticeWrapList = noticeService.getNoticeWrapList();
@@ -36,6 +41,12 @@ public class NoticeController {
         return UnifiedResult.ok(noticeModelList);
     }
 
+    /**
+     * 获取公告详情接口
+     *
+     * @param id 公告id
+     * @return 公告详细内容
+     */
     @RequestMapping("/detail/notice")
     public UnifiedResult getNotice(Integer id) {
         if (id == null) {

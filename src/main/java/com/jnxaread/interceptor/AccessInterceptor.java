@@ -50,8 +50,10 @@ public class AccessInterceptor implements HandlerInterceptor {
                 context.setAttribute("iosAccess", iosAccess + 1);
             }
         } else {
-            String[] others = {"phone", "Mobile", "BlackBerry", "IEMobile", "MQQBrowser", "JUC", "Fennec", "wOSBrowser",
-                    "BrowserNG", "WebOS", "Symbian", "Windows Phone", "pad", "pod"};
+            String[] others = {
+                    "phone", "Mobile", "BlackBerry", "IEMobile", "MQQBrowser", "JUC", "Fennec", "wOSBrowser",
+                    "BrowserNG", "WebOS", "Symbian", "Windows Phone", "pad", "pod"
+            };
             boolean flag = true;
             for (String other : others) {
                 if (terminal.contains(other)) {
