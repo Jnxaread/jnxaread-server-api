@@ -1,10 +1,11 @@
 package com.jnxaread.config;
 
 import com.jnxaread.interceptor.AccessInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.annotation.Resource;
 
 /**
  * @author 未央
@@ -13,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
 
-    @Autowired
+    @Resource
     private AccessInterceptor accessInterceptor;
 
     @Override
