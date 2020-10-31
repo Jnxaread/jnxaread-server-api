@@ -47,7 +47,7 @@ public class UserController {
      * 如果验证码发送时间在两分钟之前，可以再次发送验证码
      * 否则不允许发送验证码
      */
-    private Map<String, Date> emailMap = new HashMap<>();
+    private final Map<String, Date> emailMap = new HashMap<>();
 
     /**
      * 用户登录接口
@@ -173,9 +173,8 @@ public class UserController {
         //注册完成后自动登录
         request.setAttribute("username", user.getUsername());
         request.setAttribute("password", user.getPassword());
-        UnifiedResult unifiedResult = signIn(request);
 
-        return unifiedResult;
+        return signIn(request);
     }
 
     /**
@@ -200,11 +199,11 @@ public class UserController {
         }
 
         // 生成6位随机验证码
-        String code = "";
+        StringBuilder code = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < 6; i++) {
             int r = random.nextInt(10);
-            code = code + r;
+            code.append(r);
         }
 
         // 发送邮箱验证码
@@ -226,7 +225,7 @@ public class UserController {
         emailMap.put(email, new Date());
 
         //将邮箱验证码保存到session中
-        session.setAttribute("emailCode", code);
+        session.setAttribute("emailCode", code.toString());
         //设置验证码的有效期为10分钟
         session.setMaxInactiveInterval(600);
         return UnifiedResult.ok();
