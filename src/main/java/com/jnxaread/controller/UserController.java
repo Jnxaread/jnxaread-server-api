@@ -26,6 +26,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * 用户Controller
+ * 用于处理用户相关的业务操作
+ *
  * @author 未央
  * @create 2020-04-21 17:11
  */
@@ -152,18 +155,18 @@ public class UserController {
         }
         request.getSession().setAttribute("emailCode", null);
 
-        User accountVali = userService.getUserByAccount(newUser.getAccount());
-        if (accountVali != null) {
+        User verifyAccount = userService.getUserByAccount(newUser.getAccount());
+        if (verifyAccount != null) {
             return UnifiedResult.build(400, "账号已被注册", null);
         }
 
-        User usernameVali = userService.getUserByUsername(newUser.getUsername());
-        if (usernameVali != null) {
+        User verifyUsername = userService.getUserByUsername(newUser.getUsername());
+        if (verifyUsername != null) {
             return UnifiedResult.build(400, "用户名已被注册", null);
         }
 
-        User emailVali = userService.getUserByEmail(newUser.getEmail());
-        if (emailVali != null) {
+        User verifyEmail = userService.getUserByEmail(newUser.getEmail());
+        if (verifyEmail != null) {
             return UnifiedResult.build(400, "该邮箱已被绑定，无法注册", null);
         }
 

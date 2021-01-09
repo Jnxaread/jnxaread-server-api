@@ -2,10 +2,10 @@ package com.jnxaread.timer;
 
 import com.jnxaread.bean.Access;
 import com.jnxaread.service.AccessService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import java.util.Date;
 
@@ -16,10 +16,10 @@ import java.util.Date;
 @Controller
 public class AccessTimerTask {
 
-    @Autowired
+    @Resource
     private AccessService accessService;
 
-    @Autowired
+    @Resource
     private ServletContext context;
 
     @Scheduled(cron = " 0 0/6 * * * ? ")
