@@ -122,6 +122,16 @@ public class LibraryController {
         List<FictionWrap> fictionWrapList = libraryService.getFictionWrapList(0, level, 1, 3);
         ArrayList<FictionModel> fictionModelList = new ArrayList<>();
         fictionWrapList.forEach(fictionWrap -> {
+            String[] queryTags = fictionWrap.getTags();
+            int length = queryTags.length;
+            if (length > 3) {
+                length = 3;
+            }
+            String[] tags = new String[length];
+            for (int i = 0; i < queryTags.length && i < length; i++) {
+                tags[i] = queryTags[i];
+            }
+            fictionWrap.setTags(tags);
             FictionModel fictionModel = ModelUtil.getFictionModel(fictionWrap);
             fictionModelList.add(fictionModel);
         });
@@ -386,7 +396,7 @@ public class LibraryController {
         } else {
             Chapter chapter = libraryService.getChapter(newComment.getChapterId());
             //如果章节id和作品id不匹配或者用户等级低于章节的限制等级，则返回错误信息
-            if (!chapter.getFictionId().equals(newComment.getFictionId())||user.getLevel() < chapter.getRestricted()) {
+            if (!chapter.getFictionId().equals(newComment.getFictionId()) || user.getLevel() < chapter.getRestricted()) {
                 return UnifiedResult.build(400, "参数错误", null);
             }
         }
