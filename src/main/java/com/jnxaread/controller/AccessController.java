@@ -1,24 +1,33 @@
-package com.jnxaread.interceptor;
+package com.jnxaread.controller;
 
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
+import com.jnxaread.entity.UnifiedResult;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
- * 访问统计拦截器
+ * 页面浏览统计Controller
+ * 用户每进入一个前端页面则增加一个pageView
  *
- * @author 未央
- * @create 2019-11-04 22:41
+ * @Author 未央
+ * @Create 2021-01-18 13:47
  */
-@Component
-public class AccessInterceptor implements HandlerInterceptor {
+@RestController
+@RequestMapping("/access/counter")
+public class AccessController {
 
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
+    /**
+     * 页面浏览计数器
+     * 前端页面每次跳转都请求一次该接口，从而增加一个PV
+     *
+     * @param request http请求对象
+     * @return 统一响应结构
+     */
+    @PostMapping("/pageView")
+    public UnifiedResult pageViewCount(HttpServletRequest request) {
         ServletContext context = request.getServletContext();
         Integer totalAccess = (Integer) context.getAttribute("totalAccess");
         Integer pcAccess = (Integer) context.getAttribute("pcAccess");
@@ -32,7 +41,7 @@ public class AccessInterceptor implements HandlerInterceptor {
             context.setAttribute("totalAccess", totalAccess + 1);
         }
 
-        String terminal = request.getParameter("terminal");
+        String terminal = request.getHeader("User-Agent");
         if (terminal == null) {
             terminal = "";
         }
@@ -74,17 +83,6 @@ public class AccessInterceptor implements HandlerInterceptor {
                 }
             }
         }
-
-        return true;
-    }
-
-    @Override
-    public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {
-
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
-
+        return UnifiedResult.ok();
     }
 }
