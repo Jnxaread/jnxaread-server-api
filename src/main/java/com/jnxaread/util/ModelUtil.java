@@ -8,6 +8,8 @@ import com.jnxaread.bean.wrap.*;
 import com.jnxaread.model.*;
 
 /**
+ * 将所提供的实体对象转换为响应模型对象
+ *
  * @author 未央
  * @create 2020-05-23 18:04
  */
@@ -16,8 +18,8 @@ public class ModelUtil {
     /**
      * 将User封装到UserModel
      *
-     * @param user
-     * @return
+     * @param user 需要转换的User对象
+     * @return 封装好的UserModel对象
      */
     public static UserModel getUserModel(User user) {
         UserModel userModel = new UserModel();
@@ -42,8 +44,8 @@ public class ModelUtil {
     /**
      * 将FictionWrap封装到FictionModel
      *
-     * @param fictionWrap
-     * @return
+     * @param fictionWrap 需要转换的FictionWrap对象
+     * @return 封装好的FictionModel对象
      */
     public static FictionModel getFictionModel(FictionWrap fictionWrap) {
         FictionModel fictionModel = new FictionModel();
@@ -67,8 +69,8 @@ public class ModelUtil {
     /**
      * 将Chapter封装到ChapterModel中
      *
-     * @param chapter
-     * @return
+     * @param chapter 需要转换的Chapter对象
+     * @return 封装好的ChapterModel对象
      */
     public static ChapterModel getChapterModel(Chapter chapter) {
         ChapterModel chapterModel = new ChapterModel();
@@ -89,8 +91,8 @@ public class ModelUtil {
     /**
      * 将ChapterWrap封装到ChapterModel中
      *
-     * @param chapterWrap
-     * @return
+     * @param chapterWrap 需要转换的ChapterWrap对象
+     * @return 封装好的ChapterModel对象
      */
     public static ChapterModel getChapterModel(ChapterWrap chapterWrap) {
         ChapterModel chapterModel = new ChapterModel();

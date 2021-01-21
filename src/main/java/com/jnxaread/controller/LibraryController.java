@@ -480,7 +480,6 @@ public class LibraryController {
             case 1:
                 return UnifiedResult.build(400, "章节不存在", null);
             case 2:
-                return UnifiedResult.build(400, "参数错误", null);
             case 3:
                 return UnifiedResult.build(400, "参数错误", null);
             default:
