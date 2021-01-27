@@ -1,13 +1,16 @@
 package com.jnxaread.controller;
 
 import cn.hutool.core.date.DateUtil;
-import com.jnxaread.bean.Login;
 import com.jnxaread.bean.User;
 import com.jnxaread.bean.wrap.UserWrap;
 import com.jnxaread.entity.UnifiedResult;
+import com.jnxaread.entity.UserGrade;
+import com.jnxaread.entity.UserLevel;
 import com.jnxaread.model.UserModel;
 import com.jnxaread.service.UserService;
 import com.jnxaread.util.ModelUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -40,10 +43,18 @@ public class UserController {
     private UserService userService;
 
     @Resource
+    private UserGrade userGrade;
+
+    @Resource
+    private UserLevel userLevel;
+
+    @Resource
     private JavaMailSender javaMailSender;
 
     @Value("${spring.mail.username}")
     private String emailOfSender;
+
+    private final Logger logger = LoggerFactory.getLogger("login");
 
     /**
      * 用来存储发送过验证码的邮箱账号和发送时间
@@ -76,16 +87,21 @@ public class UserController {
         }
         session.setAttribute("user", user);
 
-        //记录用户登录ip、时间
-        Login newLogin = new Login();
-        newLogin.setIP(request.getRemoteAddr());
-        newLogin.setUserId(user.getId());
-        newLogin.setCreateTime(new Date());
-        //记录用户登录终端
-//        String terminal = request.getParameter("terminal");
-        newLogin.setTerminal(request.getHeader("User-Agent"));
-        newLogin.setSystem(0);
-        userService.addLogin(newLogin);
+
+        user.setLoginCount(user.getLoginCount() + 1);
+        user.setGrade(user.getGrade() + userGrade.getLogin());
+        Integer[] gradeArr = userLevel.getGradeArr();
+        for (int i = 0; i < gradeArr.length; i++) {
+            if (gradeArr[i] > user.getGrade()) {
+                user.setLevel(i - 1);
+                break;
+            }
+        }
+        userService.updateUser(user);
+
+        // user:245,time:1667889656335,IP:192.169.2.105,terminal:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36,system:0
+        String loginMsg = user.getId() + "-" + request.getRemoteAddr() + "-0-" + request.getHeader("User-Agent");
+        logger.info(loginMsg);
 
         UserModel userModel = ModelUtil.getUserModel(user);
         return UnifiedResult.ok(userModel);

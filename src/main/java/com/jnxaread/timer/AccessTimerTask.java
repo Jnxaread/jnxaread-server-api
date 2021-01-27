@@ -22,43 +22,43 @@ public class AccessTimerTask {
     @Resource
     private ServletContext context;
 
-    @Scheduled(cron = " 0 0/6 * * * ? ")
+    @Scheduled(cron = " 0 0/10 * * * ? ")
     public void saveAccessCount() {
 
-        Integer totalAccess = (Integer) context.getAttribute("totalAccess");
-        Integer pcAccess = (Integer) context.getAttribute("pcAccess");
-        Integer androidAccess = (Integer) context.getAttribute("androidAccess");
-        Integer iosAccess = (Integer) context.getAttribute("iosAccess");
-        Integer othersAccess = (Integer) context.getAttribute("othersAccess");
+        Integer total = (Integer) context.getAttribute("total");
+        Integer PC = (Integer) context.getAttribute("PC");
+        Integer android = (Integer) context.getAttribute("android");
+        Integer iOS = (Integer) context.getAttribute("iOS");
+        Integer others = (Integer) context.getAttribute("others");
 
-        if (totalAccess == null) {
-            totalAccess = 0;
+        if (total == null) {
+            total = 0;
         }
-        if (pcAccess == null) {
-            pcAccess = 0;
+        if (PC == null) {
+            PC = 0;
         }
-        if (androidAccess == null) {
-            androidAccess = 0;
+        if (android == null) {
+            android = 0;
         }
-        if (iosAccess == null) {
-            iosAccess = 0;
+        if (iOS == null) {
+            iOS = 0;
         }
-        if (othersAccess == null) {
-            othersAccess = 0;
+        if (others == null) {
+            others = 0;
         }
 
-        context.setAttribute("totalAccess", 0);
-        context.setAttribute("pcAccess", 0);
-        context.setAttribute("androidAccess", 0);
-        context.setAttribute("iosAccess", 0);
-        context.setAttribute("othersAccess", 0);
+        context.setAttribute("total", 0);
+        context.setAttribute("PC", 0);
+        context.setAttribute("android", 0);
+        context.setAttribute("iOS", 0);
+        context.setAttribute("others", 0);
 
         Access newAccess = new Access();
-        newAccess.setTotal(totalAccess);
-        newAccess.setPC(pcAccess);
-        newAccess.setAndroid(androidAccess);
-        newAccess.setiOS(iosAccess);
-        newAccess.setOthers(othersAccess);
+        newAccess.setTotal(total);
+        newAccess.setPC(PC);
+        newAccess.setAndroid(android);
+        newAccess.setiOS(iOS);
+        newAccess.setOthers(others);
         newAccess.setCreateTime(new Date());
 
         accessService.addAccess(newAccess);
