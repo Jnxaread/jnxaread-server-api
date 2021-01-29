@@ -14,7 +14,7 @@ import java.util.Date;
  * @create 2019-11-05 19:38
  */
 @Controller
-public class AccessTimerTask {
+public class PageViewTimerTask {
 
     @Resource
     private AccessService accessService;
@@ -22,8 +22,8 @@ public class AccessTimerTask {
     @Resource
     private ServletContext context;
 
-    @Scheduled(cron = " 0 0/10 * * * ? ")
-    public void saveAccessCount() {
+    @Scheduled(cron = " 0 0/12 * * * ? ")
+    public void savePageViewCount() {
 
         Integer total = (Integer) context.getAttribute("total");
         Integer PC = (Integer) context.getAttribute("PC");
