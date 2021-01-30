@@ -23,9 +23,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,7 +62,7 @@ public class UserController {
      * 如果验证码发送时间在两分钟之前，可以再次发送验证码
      * 否则不允许发送验证码
      */
-    private final Map<String, Date> emailMap = new HashMap<>();
+    private final Map<String, Date> emailMap = new ConcurrentHashMap<>();
 
     /**
      * 用户登录接口
@@ -101,7 +101,6 @@ public class UserController {
         }
         userService.updateUser(user);
 
-        // user:245,time:1667889656335,IP:192.169.2.105,terminal:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36,system:0
         String loginMsg = user.getId() + "-" + request.getRemoteAddr() + "-0-" + request.getHeader("User-Agent");
         logger.info(loginMsg);
 
@@ -194,6 +193,7 @@ public class UserController {
 
         newUser.setCreateTime(new Date());
         User user = userService.addUser(newUser);
+        emailMap.remove(user.getEmail());
 
         //注册完成后自动登录
         request.setAttribute("username", user.getUsername());
@@ -232,7 +232,7 @@ public class UserController {
         }
 
         // 发送邮箱验证码
-        String content = "您的邮箱验证码为：" + code + "，此验证码十分钟内有效。";
+        String content = "您的验证码为：" + code + "，此验证码十分钟内有效。";
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(emailOfSender);
