@@ -50,11 +50,11 @@ public class NoticeController {
     @RequestMapping("/detail/notice")
     public UnifiedResult getNotice(Integer id) {
         if (id == null) {
-            return UnifiedResult.build(400, "参数错误", null);
+            return UnifiedResult.build("400", "参数错误", null);
         }
         NoticeWrap noticeWrap = noticeService.getNoticeWrap(id);
         if (noticeWrap == null) {
-            return UnifiedResult.build(400, "公告不存在", null);
+            return UnifiedResult.build("400", "公告不存在", null);
         }
 
         NoticeModel noticeModel = ModelUtil.getNoticeModel(noticeWrap);

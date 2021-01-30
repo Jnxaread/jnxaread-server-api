@@ -47,7 +47,7 @@ public class LibraryController {
      */
     @PostMapping("/list/fiction")
     public UnifiedResult getFictionList(HttpSession session, Integer userId, Integer page) {
-        if (userId == null || page == null) return UnifiedResult.build(400, "参数错误", null);
+        if (userId == null || page == null) return UnifiedResult.build("400", "参数错误", null);
 
         User user = (User) session.getAttribute("user");
         Integer level;
@@ -86,7 +86,7 @@ public class LibraryController {
      */
     @PostMapping("/list/fiction/own")
     public UnifiedResult getOwnFictionList(HttpSession session, Integer page) {
-        if (page == null) return UnifiedResult.build(400, "参数错误", null);
+        if (page == null) return UnifiedResult.build("400", "参数错误", null);
         User user = (User) session.getAttribute("user");
         List<FictionWrap> fictionWrapList = libraryService.getOwnFictionWrapList(user.getId(), page);
 
@@ -148,7 +148,7 @@ public class LibraryController {
     @PostMapping("/list/chapter")
     public UnifiedResult getChapterList(HttpSession session, Integer fictionId) {
         if (fictionId == null) {
-            return UnifiedResult.build(400, "参数错误", null);
+            return UnifiedResult.build("400", "参数错误", null);
         }
 
         User user = (User) session.getAttribute("user");
@@ -206,9 +206,9 @@ public class LibraryController {
             for (String tag : tags) {
                 //考虑到存在英文标签的情况，所以对于标签中的空格不进行处理
                 if (tag.length() > 11) {
-                    return UnifiedResult.build(406, "参数错误", null);
+                    return UnifiedResult.build("406", "参数错误", null);
                 } else if (tag.contains(" ")) {
-                    return UnifiedResult.build(407, "参数错误", null);
+                    return UnifiedResult.build("407", "参数错误", null);
                 }
                 Label label = new Label();
                 label.setFictionId(fictionId);
@@ -237,7 +237,7 @@ public class LibraryController {
         Fiction fiction = libraryService.getFiction(newChapter.getFictionId());
         //如果作品的作者id与当前登录用户的id不一致，则返回错误信息
         if (!fiction.getUserId().equals(user.getId())) {
-            return UnifiedResult.build(405, "参数错误", null);
+            return UnifiedResult.build("405", "参数错误", null);
         }
         newChapter.setUserId(user.getId());
         int wordCount = ContentUtil.getWordCount(newChapter.getContent());
@@ -247,9 +247,9 @@ public class LibraryController {
         if (chapterId > 0) {
             return UnifiedResult.ok(chapterId);
         } else if (chapterId == -1) {
-            return UnifiedResult.build(400, "章节号已存在", null);
+            return UnifiedResult.build("400", "章节号已存在", null);
         } else {
-            return UnifiedResult.build(400, "章节号错误", null);
+            return UnifiedResult.build("400", "章节号错误", null);
         }
     }
 
@@ -262,7 +262,7 @@ public class LibraryController {
     @PostMapping("/detail/fiction")
     public UnifiedResult getFiction(Integer id) {
         if (id == null) {
-            return UnifiedResult.build(400, "参数错误", null);
+            return UnifiedResult.build("400", "参数错误", null);
         }
         Map<String, Object> fictionMap = new HashMap<>();
 
@@ -290,7 +290,7 @@ public class LibraryController {
      */
     @PostMapping("/brief/fiction")
     public UnifiedResult getFictionBrief(Integer id) {
-        if (id == null) return UnifiedResult.build(400, "参数错误", null);
+        if (id == null) return UnifiedResult.build("400", "参数错误", null);
         FictionWrap fictionWrap = libraryService.getFictionWrap(id);
         FictionModel fictionModel = ModelUtil.getFictionModel(fictionWrap);
         return UnifiedResult.ok(fictionModel);
@@ -307,9 +307,9 @@ public class LibraryController {
      */
     @PostMapping("/detail/chapter")
     public UnifiedResult getChapterDetail(Integer id) {
-        if (id == null) return UnifiedResult.build(400, "参数错误", null);
+        if (id == null) return UnifiedResult.build("400", "参数错误", null);
         ChapterWrap chapterWrap = libraryService.getChapterWrap(id);
-        if (chapterWrap == null) return UnifiedResult.build(400, "章节不存在", null);
+        if (chapterWrap == null) return UnifiedResult.build("400", "章节不存在", null);
         ChapterModel chapterModel = ModelUtil.getChapterModel(chapterWrap);
         List<CommentWrap> commentWrapList = libraryService.getCommentWrapList(id);
         List<CommentModel> commentModelList = new ArrayList<>();
@@ -335,7 +335,7 @@ public class LibraryController {
     @PostMapping("/detail/chapter/number")
     public UnifiedResult getChapterByNumber(Integer fictionId, Integer number) {
         if (fictionId == null || number == null) {
-            return UnifiedResult.build(400, "参数错误", null);
+            return UnifiedResult.build("400", "参数错误", null);
         }
         ChapterWrap chapterWrap = libraryService.getChapterWrapByNumber(fictionId, number);
         ChapterModel chapterModel = ModelUtil.getChapterModel(chapterWrap);
@@ -362,11 +362,11 @@ public class LibraryController {
      */
     @PostMapping("/brief/chapter")
     public UnifiedResult getChapter(HttpSession session, Integer id) {
-        if (id == null) return UnifiedResult.build(400, "参数错误", null);
+        if (id == null) return UnifiedResult.build("400", "参数错误", null);
         User user = (User) session.getAttribute("user");
         Chapter chapter = libraryService.getChapter(id);
         if (!user.getId().equals(chapter.getUserId())) {
-            return UnifiedResult.build(400, "参数错误", null);
+            return UnifiedResult.build("400", "参数错误", null);
         }
         ChapterModel chapterModel = ModelUtil.getChapterModel(chapter);
         return UnifiedResult.ok(chapterModel);
@@ -382,13 +382,13 @@ public class LibraryController {
     @PostMapping("/new/comment")
     public UnifiedResult addComment(HttpSession session, Comment newComment) {
         if (newComment.getFictionId() == null) {
-            return UnifiedResult.build(400, "参数错误", null);
+            return UnifiedResult.build("400", "参数错误", null);
         }
         User user = (User) session.getAttribute("user");
         Fiction fiction = libraryService.getFiction(newComment.getFictionId());
         //如果用户等级低于作品的限制等级，则返回错误信息
         if (user.getLevel() < fiction.getRestricted()) {
-            return UnifiedResult.build(400, "参数错误", null);
+            return UnifiedResult.build("400", "参数错误", null);
         }
         if (newComment.getChapterId() == null) {
             Chapter chapter0 = libraryService.getChapterByNumber(newComment.getFictionId(), -1);
@@ -397,7 +397,7 @@ public class LibraryController {
             Chapter chapter = libraryService.getChapter(newComment.getChapterId());
             //如果章节id和作品id不匹配或者用户等级低于章节的限制等级，则返回错误信息
             if (!chapter.getFictionId().equals(newComment.getFictionId()) || user.getLevel() < chapter.getRestricted()) {
-                return UnifiedResult.build(400, "参数错误", null);
+                return UnifiedResult.build("400", "参数错误", null);
             }
         }
         newComment.setUserId(user.getId());
@@ -407,9 +407,9 @@ public class LibraryController {
             case 0:
                 return UnifiedResult.ok();
             case 1:
-                return UnifiedResult.build(400, "章节不存在", null);
+                return UnifiedResult.build("400", "章节不存在", null);
             default:
-                return UnifiedResult.build(500, "未知错误", null);
+                return UnifiedResult.build("500", "未知错误", null);
         }
     }
 
@@ -421,7 +421,7 @@ public class LibraryController {
      */
     @PostMapping("/list/comment")
     public UnifiedResult getUserCommentList(HttpSession session, Integer userId) {
-        if (userId == null) return UnifiedResult.build(400, "参数错误", null);
+        if (userId == null) return UnifiedResult.build("400", "参数错误", null);
 
         User user = (User) session.getAttribute("user");
         Integer level;
@@ -449,7 +449,7 @@ public class LibraryController {
         User user = (User) session.getAttribute("user");
         Chapter chapter = libraryService.getChapter(editedChapter.getId());
         if (!user.getId().equals(chapter.getUserId())) {
-            return UnifiedResult.build(405, "参数错误", null);
+            return UnifiedResult.build("405", "参数错误", null);
         }
         Chapter updatedChapter = new Chapter();
         updatedChapter.setId(editedChapter.getId());
@@ -471,19 +471,19 @@ public class LibraryController {
      */
     @PostMapping("/hide/chapter")
     public UnifiedResult hideChapter(HttpSession session, Integer id, Boolean hide) {
-        if (id == null || hide == null) return UnifiedResult.build(400, "参数错误", null);
+        if (id == null || hide == null) return UnifiedResult.build("400", "参数错误", null);
         User user = (User) session.getAttribute("user");
         int result = libraryService.hideChapter(id, user.getId(), hide);
         switch (result) {
             case 0:
                 return UnifiedResult.ok();
             case 1:
-                return UnifiedResult.build(400, "章节不存在", null);
+                return UnifiedResult.build("400", "章节不存在", null);
             case 2:
             case 3:
-                return UnifiedResult.build(400, "参数错误", null);
+                return UnifiedResult.build("400", "参数错误", null);
             default:
-                return UnifiedResult.build(400, "未知错误", null);
+                return UnifiedResult.build("400", "未知错误", null);
         }
     }
 
@@ -497,18 +497,18 @@ public class LibraryController {
      */
     @PostMapping("/delete/chapter")
     public UnifiedResult deleteChapter(HttpSession session, Integer id) {
-        if (id == null) return UnifiedResult.build(400, "参数错误", null);
+        if (id == null) return UnifiedResult.build("400", "参数错误", null);
         User user = (User) session.getAttribute("user");
         int result = libraryService.deleteChapter(id, user.getId());
         switch (result) {
             case 0:
                 return UnifiedResult.ok();
             case 1:
-                return UnifiedResult.build(400, "章节不存在", null);
+                return UnifiedResult.build("400", "章节不存在", null);
             case 2:
-                return UnifiedResult.build(400, "参数错误", null);
+                return UnifiedResult.build("400", "参数错误", null);
             default:
-                return UnifiedResult.build(400, "未知错误", null);
+                return UnifiedResult.build("400", "未知错误", null);
         }
     }
 
