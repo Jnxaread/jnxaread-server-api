@@ -83,7 +83,8 @@ public class UserController {
         String password = request.getParameter("password");
 
         User user = userService.getUserByAccount(account);
-        if (user == null || !user.getPassword().equals(password)) {
+        String ciphertext = DigestUtils.md5DigestAsHex(password.getBytes());
+        if (user == null || !user.getPassword().equals(ciphertext.toUpperCase())) {
             return UnifiedResult.build("400", "账号或密码错误", null);
         }
         session.setAttribute("user", user);
