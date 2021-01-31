@@ -2,7 +2,6 @@ package com.jnxaread.util;
 
 import com.jnxaread.bean.Category;
 import com.jnxaread.bean.Chapter;
-import com.jnxaread.bean.Reply;
 import com.jnxaread.bean.User;
 import com.jnxaread.bean.wrap.*;
 import com.jnxaread.model.*;
@@ -113,8 +112,8 @@ public class ModelUtil {
     /**
      * 将CommentWrap封装到CommentModel
      *
-     * @param commentWrap
-     * @return
+     * @param commentWrap comment包装类
+     * @return comment响应模型对象
      */
     public static CommentModel getCommentModel(CommentWrap commentWrap) {
         CommentModel commentModel = new CommentModel();
@@ -128,50 +127,35 @@ public class ModelUtil {
     /**
      * 将TopicWrap封装到TopicModel
      *
-     * @param wrapTopic
-     * @return
+     * @param topicWrap topic包装类对象
+     * @return topic响应对象
      */
-    public static TopicModel getTopicModel(TopicWrap wrapTopic) {
+    public static TopicModel getTopicModel(TopicWrap topicWrap) {
         TopicModel topicModel = new TopicModel();
-        topicModel.setId(wrapTopic.getId());
-        topicModel.setLabel(wrapTopic.getLabel());
-        topicModel.setTitle(wrapTopic.getTitle());
-        if (wrapTopic.getContent() != null) {
-            topicModel.setContent(wrapTopic.getContent());
+        topicModel.setId(topicWrap.getId());
+        topicModel.setLabel(topicWrap.getLabel());
+        topicModel.setTitle(topicWrap.getTitle());
+        if (topicWrap.getContent() != null) {
+            topicModel.setContent(topicWrap.getContent());
         }
-        topicModel.setUsername(wrapTopic.getUsername());
-        topicModel.setCreateTime(wrapTopic.getCreateTime());
-        if (wrapTopic.getLastReply() != null) {
-            topicModel.setLastReply(wrapTopic.getLastReply());
+        topicModel.setUsername(topicWrap.getUsername());
+        topicModel.setCreateTime(topicWrap.getCreateTime());
+        if (topicWrap.getLastReply() != null) {
+            topicModel.setLastReply(topicWrap.getLastReply());
         }
-        if (wrapTopic.getLastSubmit() != null) {
-            topicModel.setLastSubmit(wrapTopic.getLastSubmit());
+        if (topicWrap.getLastSubmit() != null) {
+            topicModel.setLastSubmit(topicWrap.getLastSubmit());
         }
-        topicModel.setReplyCount(wrapTopic.getReplyCount());
-        topicModel.setViewCount(wrapTopic.getViewCount());
+        topicModel.setReplyCount(topicWrap.getReplyCount());
+        topicModel.setViewCount(topicWrap.getViewCount());
         return topicModel;
-    }
-
-    /**
-     * 将Reply封装到ReplyModel中
-     *
-     * @param reply
-     * @return
-     */
-    public static ReplyModel getReplyModel(Reply reply) {
-        ReplyModel replyModel = new ReplyModel();
-        replyModel.setId(reply.getId());
-        replyModel.setCreateTime(reply.getCreateTime());
-        replyModel.setFloor(reply.getFloor());
-        replyModel.setContent(reply.getContent());
-        return replyModel;
     }
 
     /**
      * 将ReplyWrap封装到ReplyModel
      *
-     * @param replyWrap
-     * @return
+     * @param replyWrap reply包装类
+     * @return reply响应对象
      */
     public static ReplyModel getReplyModel(ReplyWrap replyWrap) {
         ReplyModel replyModel = new ReplyModel();
@@ -195,8 +179,8 @@ public class ModelUtil {
     /**
      * 将NoticeWrap封装到NoticeModel中
      *
-     * @param noticeWrap
-     * @return
+     * @param noticeWrap notice包装类对象
+     * @return notice响应对象
      */
     public static NoticeModel getNoticeModel(NoticeWrap noticeWrap) {
         NoticeModel noticeModel = new NoticeModel();
@@ -215,8 +199,8 @@ public class ModelUtil {
     /**
      * 将Category封装到CategoryModel中
      *
-     * @param category
-     * @return
+     * @param category category对象
+     * @return category响应对象
      */
     public static CategoryModel getCategoryModel(Category category) {
         CategoryModel categoryModel = new CategoryModel();
