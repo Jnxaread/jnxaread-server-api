@@ -1,6 +1,7 @@
 package com.jnxaread.controller;
 
 import com.jnxaread.entity.UnifiedResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -85,4 +86,20 @@ public class AccessController {
         }
         return UnifiedResult.ok();
     }
+
+    /**
+     * 测试优雅停机
+     *
+     * @return 访问结果
+     */
+    @GetMapping("/test")
+    public UnifiedResult testGracefulShutdown() {
+        try {
+            Thread.sleep(60000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return UnifiedResult.ok();
+    }
+
 }
