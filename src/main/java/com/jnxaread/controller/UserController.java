@@ -70,8 +70,8 @@ public class UserController {
      * @param request 请求request对象
      * @return 返回登录用户的信息
      */
-    @PostMapping("/signIn")
-    public UnifiedResult signIn(HttpServletRequest request) {
+    @PostMapping("/login")
+    public UnifiedResult login(HttpServletRequest request) {
         HttpSession session = request.getSession();
 
         //先判断用户是否已经登录
@@ -101,7 +101,7 @@ public class UserController {
         }
         userService.updateUser(user);
 
-        String loginMsg = user.getId() + "-" + request.getRemoteAddr() + "-0-" + request.getHeader("User-Agent");
+        String loginMsg = user.getId() + "-" + request.getHeader("X-Real-IP") + "-0-" + request.getHeader("User-Agent");
         logger.info(loginMsg);
 
         UserModel userModel = ModelUtil.getUserModel(user);
@@ -128,8 +128,8 @@ public class UserController {
      * @param newUser 注册用户表单数据
      * @return 返回用户信息
      */
-    @PostMapping("/signUp")
-    public UnifiedResult signUp(HttpServletRequest request, UserWrap newUser) {
+    @PostMapping("/signup")
+    public UnifiedResult signup(HttpServletRequest request, UserWrap newUser) {
         String regAccount = "^[a-zA-Z]([-_a-zA-Z0-9]{8,19})$";
         String regUsername = "^[a-zA-Z0-9_\\u4e00-\\u9fa5]{2,12}$";
         String regEmail = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
@@ -199,7 +199,7 @@ public class UserController {
         request.setAttribute("username", user.getUsername());
         request.setAttribute("password", user.getPassword());
 
-        return signIn(request);
+        return login(request);
     }
 
     /**

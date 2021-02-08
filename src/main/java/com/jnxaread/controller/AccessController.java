@@ -30,16 +30,16 @@ public class AccessController {
     @PostMapping("/pageView")
     public UnifiedResult pageViewCount(HttpServletRequest request) {
         ServletContext context = request.getServletContext();
-        Integer totalAccess = (Integer) context.getAttribute("totalAccess");
-        Integer pcAccess = (Integer) context.getAttribute("pcAccess");
-        Integer androidAccess = (Integer) context.getAttribute("androidAccess");
-        Integer iosAccess = (Integer) context.getAttribute("iosAccess");
-        Integer othersAccess = (Integer) context.getAttribute("othersAccess");
+        Integer total = (Integer) context.getAttribute("total");
+        Integer PC = (Integer) context.getAttribute("PC");
+        Integer android = (Integer) context.getAttribute("android");
+        Integer iOS = (Integer) context.getAttribute("iOS");
+        Integer others = (Integer) context.getAttribute("others");
 
-        if (totalAccess == null) {
-            context.setAttribute("totalAccess", 1);
+        if (total == null) {
+            context.setAttribute("total", 1);
         } else {
-            context.setAttribute("totalAccess", totalAccess + 1);
+            context.setAttribute("total", total + 1);
         }
 
         String terminal = request.getHeader("User-Agent");
@@ -48,39 +48,39 @@ public class AccessController {
         }
 
         if (terminal.contains("Android") || terminal.contains("Adr") || terminal.contains("android")) {
-            if (androidAccess == null) {
-                context.setAttribute("androidAccess", 1);
+            if (android == null) {
+                context.setAttribute("android", 1);
             } else {
-                context.setAttribute("androidAccess", androidAccess + 1);
+                context.setAttribute("android", android + 1);
             }
         } else if (terminal.contains("ios") || terminal.contains("iPhone") || terminal.contains("iPad") || terminal.contains("iPod")) {
-            if (iosAccess == null) {
-                context.setAttribute("iosAccess", 1);
+            if (iOS == null) {
+                context.setAttribute("iOS", 1);
             } else {
-                context.setAttribute("iosAccess", iosAccess + 1);
+                context.setAttribute("iOS", iOS + 1);
             }
         } else {
-            String[] others = {
+            String[] clients = {
                     "phone", "Mobile", "BlackBerry", "IEMobile", "MQQBrowser", "JUC", "Fennec", "wOSBrowser",
                     "BrowserNG", "WebOS", "Symbian", "Windows Phone", "pad", "pod"
             };
             boolean flag = true;
-            for (String other : others) {
-                if (terminal.contains(other)) {
-                    if (othersAccess == null) {
-                        context.setAttribute("othersAccess", 1);
+            for (String client : clients) {
+                if (terminal.contains(client)) {
+                    if (others == null) {
+                        context.setAttribute("others", 1);
                         flag = false;
                     } else {
-                        context.setAttribute("othersAccess", othersAccess + 1);
+                        context.setAttribute("others", others + 1);
                     }
                     break;
                 }
             }
             if (flag) {
-                if (pcAccess == null) {
-                    context.setAttribute("pcAccess", 1);
+                if (PC == null) {
+                    context.setAttribute("PC", 1);
                 } else {
-                    context.setAttribute("pcAccess", pcAccess + 1);
+                    context.setAttribute("PC", PC + 1);
                 }
             }
         }
