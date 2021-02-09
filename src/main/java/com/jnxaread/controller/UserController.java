@@ -12,14 +12,15 @@ import com.jnxaread.util.ModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
@@ -53,7 +54,10 @@ public class UserController {
     private JavaMailSender javaMailSender;
 
     @Value("${spring.mail.username}")
-    private String emailOfSender;
+    private String usernameOfSender;
+
+    @Value("${spring.mail.nickname}")
+    private String nicknameOfSender;
 
     private final Logger logger = LoggerFactory.getLogger("login");
 
@@ -233,14 +237,14 @@ public class UserController {
 
         // 发送邮箱验证码
         String content = "您的验证码为：" + code + "，此验证码十分钟内有效。";
-
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(emailOfSender);
-        message.setTo(email);
-        message.setSubject("用户注册验证码");
-        message.setText(content);
         try {
-            javaMailSender.send(message);
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper message = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+            message.setFrom(usernameOfSender, nicknameOfSender);
+            message.setTo(email);
+            message.setSubject("用户注册验证码");
+            message.setText(content);
+            javaMailSender.send(mimeMessage);
         } catch (Exception e) {
             e.printStackTrace();
             return UnifiedResult.build("500", "发送验证码失败，请稍后再次尝试", null);
