@@ -3,6 +3,7 @@ package com.jnxaread.controller;
 import cn.hutool.core.date.DateUtil;
 import com.jnxaread.bean.User;
 import com.jnxaread.bean.wrap.UserWrap;
+import com.jnxaread.constant.StatusCodeEnum;
 import com.jnxaread.entity.UnifiedResult;
 import com.jnxaread.entity.UserGrade;
 import com.jnxaread.entity.UserLevel;
@@ -80,7 +81,9 @@ public class UserController {
 
         //先判断用户是否已经登录
         if (session.getAttribute("user") != null) {
-            return UnifiedResult.build("400", "用户已登录", null);
+            String code = StatusCodeEnum.ALREADY_LOGGED_IN.getCode();
+            String desc = StatusCodeEnum.ALREADY_LOGGED_IN.getDescribe();
+            return UnifiedResult.build(code, desc, null);
         }
 
         String account = request.getParameter("account");
@@ -89,7 +92,9 @@ public class UserController {
         User user = userService.getUserByAccount(account);
         String ciphertext = DigestUtils.md5DigestAsHex(password.getBytes());
         if (user == null || !user.getPassword().equals(ciphertext.toUpperCase())) {
-            return UnifiedResult.build("400", "账号或密码错误", null);
+            String code = StatusCodeEnum.ACCOUNT_OR_PASSWORD_INVALID.getCode();
+            String desc = StatusCodeEnum.ACCOUNT_OR_PASSWORD_INVALID.getDescribe();
+            return UnifiedResult.build(code, desc, null);
         }
         session.setAttribute("user", user);
 
@@ -247,7 +252,9 @@ public class UserController {
             javaMailSender.send(mimeMessage);
         } catch (Exception e) {
             e.printStackTrace();
-            return UnifiedResult.build("500", "发送验证码失败，请稍后再次尝试", null);
+            String status = StatusCodeEnum.EMAIL_SENT_FAILED.getCode();
+            String desc = StatusCodeEnum.EMAIL_SENT_FAILED.getDescribe();
+            return UnifiedResult.build(status, desc, null);
         }
 
         //将邮箱账号和发送时间保存到Map中
