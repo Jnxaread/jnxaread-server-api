@@ -30,7 +30,7 @@ public class NoticeController {
      */
     @RequestMapping("/list/notice")
     public UnifiedResult getNoticeList() {
-        List<NoticeWrap> noticeWrapList = noticeService.getNoticeWrapList();
+        List<NoticeWrap> noticeWrapList = noticeService.getNoticeWrapList(1);
 
         ArrayList<NoticeModel> noticeModelList = new ArrayList<>();
         noticeWrapList.forEach(noticeWrap -> {
