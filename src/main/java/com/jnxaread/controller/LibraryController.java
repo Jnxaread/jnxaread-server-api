@@ -254,12 +254,6 @@ public class LibraryController {
     @PostMapping("/new/chapter")
     public UnifiedResult createChapter(HttpSession session, ChapterWrap newChapter) {
         User user = (User) session.getAttribute("user");
-        //根据章节的作品id查询作品
-        Fiction fiction = libraryService.getFiction(newChapter.getFictionId());
-        //如果作品的作者id与当前登录用户的id不一致，则返回错误信息
-        if (!fiction.getUserId().equals(user.getId())) {
-            return UnifiedResult.build("405", "参数错误", null);
-        }
         newChapter.setUserId(user.getId());
         int wordCount = ContentUtil.getWordCount(newChapter.getContent());
         newChapter.setWordCount(wordCount);
@@ -268,6 +262,8 @@ public class LibraryController {
         if (chapterId > 0) {
             return UnifiedResult.ok(chapterId);
         } else if (chapterId == -1) {
+            return UnifiedResult.build("400", "参数错误", null);
+        } else if (chapterId == -2) {
             return UnifiedResult.build("400", "章节号已存在", null);
         } else {
             return UnifiedResult.build("400", "章节号错误", null);
