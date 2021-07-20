@@ -220,6 +220,9 @@ public class LibraryController {
         newFiction.setUserId(user.getId());
         newFiction.setCreateTime(new Date());
         int fictionId = libraryService.addFiction(newFiction);
+        if (fictionId == -1) {
+            return UnifiedResult.build("410", "作品名称重复", null);
+        }
         //获取作品的标签数组
         String[] tags = newFiction.getTags();
         if (tags != null) {
