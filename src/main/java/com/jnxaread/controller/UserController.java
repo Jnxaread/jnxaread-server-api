@@ -306,10 +306,14 @@ public class UserController {
             return UnifiedResult.build("420", "验证码错误", null);
         }
         User user = (User) session.getAttribute("user");
-        if (!user.getPassword().equals(oldPassword)) {
+
+        String ciphertextOld = DigestUtils.md5DigestAsHex(oldPassword.getBytes());
+        if (!user.getPassword().equals(ciphertextOld.toUpperCase())) {
             return UnifiedResult.build("420", "密码错误", null);
         }
-        user.setPassword(newPassword);
+
+        String ciphertextNew = DigestUtils.md5DigestAsHex(newPassword.getBytes());
+        user.setPassword(ciphertextNew.toUpperCase());
         userService.updateUser(user);
         return UnifiedResult.ok();
     }
