@@ -184,18 +184,6 @@ public class LibraryController {
     }
 
     /**
-     * 获取作品类别ID列表
-     *
-     * @return 作品类别ID列表
-     */
-    private List<Integer> getCategoryIdList() {
-        List<Category> categoryList = libraryService.getCategoryList();
-        ArrayList<Integer> categoryIdList = new ArrayList<>();
-        categoryList.forEach(category -> categoryIdList.add(category.getId()));
-        return categoryIdList;
-    }
-
-    /**
      * 创建作品接口
      * 用户新建作品需要调用此接口
      * 调用此接口需要用户具有登录权限
@@ -211,7 +199,7 @@ public class LibraryController {
         if (categoryId == null) {
             return UnifiedResult.build("400", "作品类别不能为空", null);
         }
-        List<Integer> categoryIdList = getCategoryIdList();
+        List<Integer> categoryIdList = libraryService.getCategoryIdList();
         if (!categoryIdList.contains(categoryId)) {
             return UnifiedResult.build("400", "作品类别不存在", null);
         }
