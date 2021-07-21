@@ -195,6 +195,10 @@ public class LibraryController {
      */
     @PostMapping("/new/fiction")
     public UnifiedResult createFiction(HttpSession session, FictionWrap newFiction) {
+        if (newFiction.getTitle().contains(" ")) {
+            return UnifiedResult.build("409", "作品名称不能包含空格", null);
+        }
+
         Integer categoryId = newFiction.getCategoryId();
         if (categoryId == null) {
             return UnifiedResult.build("400", "作品类别不能为空", null);
