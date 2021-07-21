@@ -117,14 +117,17 @@ public class ForumController {
         newReply.setCreateTime(new Date());
         //将回复写入数据库
         int result = forumService.addReply(newReply);
-        if (result == 0) {
-            return UnifiedResult.ok();
-        } else if (result == 1) {
-            return UnifiedResult.build("400", "帖子不存在", null);
-        } else if (result == 2) {
-            return UnifiedResult.build("400", "帖子已被锁定，无法回复", null);
-        } else {
-            return UnifiedResult.build("400", "引用的回复不存在", null);
+        switch (result) {
+            case 0:
+                return UnifiedResult.ok();
+            case 1:
+                return UnifiedResult.build("400", "帖子不存在", null);
+            case 2:
+                return UnifiedResult.build("400", "帖子已被锁定，无法回复", null);
+            case 3:
+                return UnifiedResult.build("400", "引用的回复不存在", null);
+            default:
+                return UnifiedResult.build("400", "未知错误", null);
         }
     }
 
@@ -237,9 +240,14 @@ public class ForumController {
         if (userId == null) return UnifiedResult.build("400", "参数错误", null);
 
         User user = (User) session.getAttribute("user");
+
+        //如果用户未登录，则用户等级为0，否则获取该用户的等级
         Integer level;
-        if (user == null) level = 0;
-        else level = user.getLevel();
+        if (user == null) {
+            level = 0;
+        } else {
+            level = user.getLevel();
+        }
 
         List<ReplyWrap> replyWrapList = forumService.getReplyWrapListByUserId(userId, level);
         List<ReplyModel> replyModelList = new ArrayList<>();
