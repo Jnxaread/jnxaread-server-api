@@ -24,9 +24,7 @@ import javax.annotation.Resource;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -297,14 +295,16 @@ public class UserController {
     public UnifiedResult changePassword(HttpServletRequest request) {
         String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");
-        String emailCode = request.getParameter("emailCode");
-        if (oldPassword == null || newPassword == null || emailCode == null) {
+        String emailCodeParam = request.getParameter("emailCode");
+        if (oldPassword == null || newPassword == null || emailCodeParam == null) {
             return UnifiedResult.build("401", "参数错误", null);
         }
         HttpSession session = request.getSession();
-        if (!session.getAttribute("emailCode").equals(emailCode)) {
+        String emailCodeSession = (String) session.getAttribute("emailCode");
+        if (emailCodeSession == null || !emailCodeSession.equals(emailCodeParam)) {
             return UnifiedResult.build("420", "验证码错误", null);
         }
+
         User user = (User) session.getAttribute("user");
 
         String ciphertextOld = DigestUtils.md5DigestAsHex(oldPassword.getBytes());
