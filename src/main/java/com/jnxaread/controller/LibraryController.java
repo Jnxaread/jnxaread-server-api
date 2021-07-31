@@ -414,15 +414,8 @@ public class LibraryController {
         }
         newComment.setUserId(user.getId());
         newComment.setCreateTime(new Date());
-        int result = libraryService.addComment(newComment);
-        switch (result) {
-            case 0:
-                return UnifiedResult.ok();
-            case 1:
-                return UnifiedResult.build("400", "章节不存在", null);
-            default:
-                return UnifiedResult.build("500", "未知错误", null);
-        }
+        libraryService.addComment(newComment);
+        return UnifiedResult.ok();
     }
 
     /**
@@ -485,18 +478,8 @@ public class LibraryController {
     public UnifiedResult hideChapter(HttpSession session, Integer id, Boolean hide) {
         if (id == null || hide == null) return UnifiedResult.build("400", "参数错误", null);
         User user = (User) session.getAttribute("user");
-        int result = libraryService.hideChapter(id, user.getId(), hide);
-        switch (result) {
-            case 0:
-                return UnifiedResult.ok();
-            case 1:
-                return UnifiedResult.build("400", "章节不存在", null);
-            case 2:
-            case 3:
-                return UnifiedResult.build("400", "参数错误", null);
-            default:
-                return UnifiedResult.build("400", "未知错误", null);
-        }
+        libraryService.hideChapter(id, user.getId(), hide);
+        return UnifiedResult.ok();
     }
 
     /**
