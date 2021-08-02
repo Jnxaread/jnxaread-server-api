@@ -116,19 +116,8 @@ public class ForumController {
         //设置发布时间
         newReply.setCreateTime(new Date());
         //将回复写入数据库
-        int result = forumService.addReply(newReply);
-        switch (result) {
-            case 0:
-                return UnifiedResult.ok();
-            case 1:
-                return UnifiedResult.build("400", "帖子不存在", null);
-            case 2:
-                return UnifiedResult.build("400", "帖子已被锁定，无法回复", null);
-            case 3:
-                return UnifiedResult.build("400", "引用的回复不存在", null);
-            default:
-                return UnifiedResult.build("400", "未知错误", null);
-        }
+        forumService.addReply(newReply);
+        return UnifiedResult.ok();
     }
 
     /**
