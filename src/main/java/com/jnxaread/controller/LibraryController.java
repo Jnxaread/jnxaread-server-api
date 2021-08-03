@@ -254,15 +254,7 @@ public class LibraryController {
         newChapter.setWordCount(wordCount);
         newChapter.setCreateTime(new Date());
         int chapterId = libraryService.addChapter(newChapter);
-        if (chapterId > 0) {
-            return UnifiedResult.ok(chapterId);
-        } else if (chapterId == -1) {
-            return UnifiedResult.build("400", "参数错误", null);
-        } else if (chapterId == -2) {
-            return UnifiedResult.build("400", "章节号已存在", null);
-        } else {
-            return UnifiedResult.build("400", "章节号错误", null);
-        }
+        return UnifiedResult.ok(chapterId);
     }
 
     /**
