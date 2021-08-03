@@ -486,17 +486,8 @@ public class LibraryController {
     public UnifiedResult deleteChapter(HttpSession session, Integer id) {
         if (id == null) return UnifiedResult.build("400", "参数错误", null);
         User user = (User) session.getAttribute("user");
-        int result = libraryService.deleteChapter(id, user.getId());
-        switch (result) {
-            case 0:
-                return UnifiedResult.ok();
-            case 1:
-                return UnifiedResult.build("400", "章节不存在", null);
-            case 2:
-                return UnifiedResult.build("400", "参数错误", null);
-            default:
-                return UnifiedResult.build("400", "未知错误", null);
-        }
+        libraryService.deleteChapter(id, user.getId());
+        return UnifiedResult.ok();
     }
 
 }
