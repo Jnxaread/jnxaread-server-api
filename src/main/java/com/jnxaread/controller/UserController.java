@@ -81,7 +81,7 @@ public class UserController {
         if (session.getAttribute("user") != null) {
             String code = UnifiedCode.ALREADY_LOGGED_IN.getCode();
             String desc = UnifiedCode.ALREADY_LOGGED_IN.getDescribe();
-            return UnifiedResult.build(code, desc, null);
+            return UnifiedResult.build(code, desc);
         }
 
         String account = request.getParameter("account");
@@ -92,7 +92,7 @@ public class UserController {
         if (user == null || !user.getPassword().equals(ciphertext.toUpperCase())) {
             String code = UnifiedCode.ACCOUNT_OR_PASSWORD_INVALID.getCode();
             String desc = UnifiedCode.ACCOUNT_OR_PASSWORD_INVALID.getDescribe();
-            return UnifiedResult.build(code, desc, null);
+            return UnifiedResult.build(code, desc);
         }
         session.setAttribute("user", user);
 
@@ -145,53 +145,53 @@ public class UserController {
         Pattern patternAccount = Pattern.compile(regAccount);
         Matcher matcherAccount = patternAccount.matcher(newUser.getAccount());
         if (!matcherAccount.matches()) {
-            return UnifiedResult.build("400", "账号必须以英文字母开头，为字母、数字、下划线和中划线的组合，长度不得低于9位不得超过20位", null);
+            return UnifiedResult.build("400", "账号必须以英文字母开头，为字母、数字、下划线和中划线的组合，长度不得低于9位不得超过20位");
         }
 
         if (newUser.getPassword().length() < 9 || newUser.getPassword().length() > 32) {
-            return UnifiedResult.build("400", "密码长度不得低于9位且不得超过32位", null);
+            return UnifiedResult.build("400", "密码长度不得低于9位且不得超过32位");
         }
 
         Pattern patternUsername = Pattern.compile(regUsername);
         Matcher matcherUsername = patternUsername.matcher(newUser.getUsername());
         if (!matcherUsername.matches()) {
-            return UnifiedResult.build("400", "用户名为汉字、字母、数字的组合且长度为2至12位", null);
+            return UnifiedResult.build("400", "用户名为汉字、字母、数字的组合且长度为2至12位");
         }
 
 //        Pattern patternMobile = Pattern.compile(regMobile);
 //        Matcher matcherMobile = patternMobile.matcher(newUser.getMobile());
 //        if (!matcherMobile.matches()) {
-//            return UnifiedResult.build("400", "手机号格式错误", null);
+//            return UnifiedResult.build("400", "手机号格式错误");
 //        }
 
         Pattern patternEmail = Pattern.compile(regEmail);
         Matcher matcherEmail = patternEmail.matcher(newUser.getEmail());
         if (!matcherEmail.matches()) {
-            return UnifiedResult.build("400", "邮箱格式错误", null);
+            return UnifiedResult.build("400", "邮箱格式错误");
         }
 
         if (newUser.getGender() != 0 && newUser.getGender() != 1 && newUser.getGender() != 2) {
-            return UnifiedResult.build("400", "未知选项", null);
+            return UnifiedResult.build("400", "未知选项");
         }
         //验证邮箱验证码
         if (!newUser.getEmailCode().equals(request.getSession().getAttribute("emailCode"))) {
-            return UnifiedResult.build("400", "验证码错误", null);
+            return UnifiedResult.build("400", "验证码错误");
         }
         request.getSession().setAttribute("emailCode", null);
 
         User verifyAccount = userService.getUserByAccount(newUser.getAccount());
         if (verifyAccount != null) {
-            return UnifiedResult.build("400", "账号已被注册", null);
+            return UnifiedResult.build("400", "账号已被注册");
         }
 
         User verifyUsername = userService.getUserByUsername(newUser.getUsername());
         if (verifyUsername != null) {
-            return UnifiedResult.build("400", "用户名已被注册", null);
+            return UnifiedResult.build("400", "用户名已被注册");
         }
 
         User verifyEmail = userService.getUserByEmail(newUser.getEmail());
         if (verifyEmail != null) {
-            return UnifiedResult.build("400", "该邮箱已被绑定，无法注册", null);
+            return UnifiedResult.build("400", "该邮箱已被绑定，无法注册");
         }
 
         //将密码进行md5加密
@@ -220,14 +220,14 @@ public class UserController {
     public UnifiedResult getEmailCode(HttpSession session, String email) {
         Date date = emailMap.get(email);
         if (date != null && DateUtil.betweenMs(date, new Date()) < 120000) {
-            return UnifiedResult.build("400", "请不要频繁获取验证码", null);
+            return UnifiedResult.build("400", "请不要频繁获取验证码");
         }
 
         String regEmail = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
         Pattern patternEmail = Pattern.compile(regEmail);
         Matcher matcherEmail = patternEmail.matcher(email);
         if (!matcherEmail.matches()) {
-            return UnifiedResult.build("400", "邮箱格式错误", null);
+            return UnifiedResult.build("400", "邮箱格式错误");
         }
 
         // 生成6位随机验证码
@@ -252,7 +252,7 @@ public class UserController {
             e.printStackTrace();
             String status = UnifiedCode.EMAIL_SENT_FAILED.getCode();
             String desc = UnifiedCode.EMAIL_SENT_FAILED.getDescribe();
-            return UnifiedResult.build(status, desc, null);
+            return UnifiedResult.build(status, desc);
         }
 
         //将邮箱账号和发送时间保存到Map中
@@ -277,7 +277,7 @@ public class UserController {
     public UnifiedResult changeBaseInfo(HttpSession session, User changedUser) {
         User user = (User) session.getAttribute("user");
         if (!user.getId().equals(changedUser.getId())) {
-            return UnifiedResult.build("400", "参数错误", null);
+            return UnifiedResult.build("400", "参数错误");
         }
         userService.updateUser(changedUser);
         User updatedUser = userService.getUser(changedUser.getId());
@@ -297,19 +297,19 @@ public class UserController {
         String newPassword = request.getParameter("newPassword");
         String emailCodeParam = request.getParameter("emailCode");
         if (oldPassword == null || newPassword == null || emailCodeParam == null) {
-            return UnifiedResult.build("401", "参数错误", null);
+            return UnifiedResult.build("401", "参数错误");
         }
         HttpSession session = request.getSession();
         String emailCodeSession = (String) session.getAttribute("emailCode");
         if (emailCodeSession == null || !emailCodeSession.equals(emailCodeParam)) {
-            return UnifiedResult.build("420", "验证码错误", null);
+            return UnifiedResult.build("420", "验证码错误");
         }
 
         User user = (User) session.getAttribute("user");
 
         String ciphertextOld = DigestUtils.md5DigestAsHex(oldPassword.getBytes());
         if (!user.getPassword().equals(ciphertextOld.toUpperCase())) {
-            return UnifiedResult.build("420", "密码错误", null);
+            return UnifiedResult.build("420", "密码错误");
         }
 
         String ciphertextNew = DigestUtils.md5DigestAsHex(newPassword.getBytes());

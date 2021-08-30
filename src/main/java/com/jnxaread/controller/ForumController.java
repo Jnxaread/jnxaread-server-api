@@ -46,33 +46,33 @@ public class ForumController {
     public UnifiedResult submitTopic(HttpSession session, Topic newTopic) {
         User user = (User) session.getAttribute("user");
         if (user.getLocked()) {
-            return UnifiedResult.build("400", "您已被封禁，无法发帖", null);
+            return UnifiedResult.build("400", "您已被封禁，无法发帖");
         }
 
         //论坛模块上线版块系统后删除这项检查
         if (!newTopic.getBoardId().equals(1)) {
-            return UnifiedResult.build("400", "参数错误", null);
+            return UnifiedResult.build("400", "参数错误");
         }
 
         String regLabel = "^[\\u4e00-\\u9fa5]{2,4}$";
         Pattern pattern = Pattern.compile(regLabel);
         Matcher matcher = pattern.matcher(newTopic.getLabel());
         if (!matcher.matches()) {
-            return UnifiedResult.build("400", "帖子标签为2至4位汉字", null);
+            return UnifiedResult.build("400", "帖子标签为2至4位汉字");
         }
 
         if (newTopic.getTitle().length() < 4 || newTopic.getTitle().length() > 35) {
-            return UnifiedResult.build("400", "帖子标题的长度为4至35个字符", null);
+            return UnifiedResult.build("400", "帖子标题的长度为4至35个字符");
         }
 
         //校验帖子内容是否为空
         boolean inspection = ContentUtil.inspection(newTopic.getContent());
         if (!inspection) {
-            return UnifiedResult.build("400", "帖子内容不能为空！", null);
+            return UnifiedResult.build("400", "帖子内容不能为空！");
         }
 
         if (newTopic.getContent().length() > 16384) {
-            return UnifiedResult.build("400", "帖子内容的长度不得超过16000个字符", null);
+            return UnifiedResult.build("400", "帖子内容的长度不得超过16000个字符");
         }
 
         //设置帖子作者id
@@ -97,18 +97,18 @@ public class ForumController {
     public UnifiedResult submitReply(HttpSession session, Reply newReply) {
         User user = (User) session.getAttribute("user");
         if (user.getLocked()) {
-            return UnifiedResult.build("400", "您已被封禁，无法回复", null);
+            return UnifiedResult.build("400", "您已被封禁，无法回复");
         }
 
         //校验回复内容是否为空
         boolean inspection = ContentUtil.inspection(newReply.getContent());
         if (!inspection) {
-            return UnifiedResult.build("400", "回复内容不能为空！", null);
+            return UnifiedResult.build("400", "回复内容不能为空！");
         }
 
         //对回复内容长度进行校验，如果内容长度超过11264，则返回错误信息
         if (newReply.getContent().length() > 11264) {
-            return UnifiedResult.build("400", "回复的长度不得超过11000个字符", null);
+            return UnifiedResult.build("400", "回复的长度不得超过11000个字符");
         }
 
         //设置回复作者id
@@ -130,13 +130,13 @@ public class ForumController {
     @PostMapping("/detail/topic")
     public UnifiedResult getTopic(Integer id, Integer page) {
         if (id == null || page == null) {
-            return UnifiedResult.build("400", "参数错误", null);
+            return UnifiedResult.build("400", "参数错误");
         }
         Map<String, Object> topicMap = new HashMap<>();
 
         TopicWrap wrapTopic = forumService.getTopicWrap(id);
         if (wrapTopic == null) {
-            return UnifiedResult.build("400", "帖子不存在", null);
+            return UnifiedResult.build("400", "帖子不存在");
         }
 
         TopicModel topicModel = ModelUtil.getTopicModel(wrapTopic);
@@ -168,7 +168,7 @@ public class ForumController {
     @PostMapping("/list/topic")
     @ResponseBody
     public UnifiedResult getTopicList(HttpSession session, Integer userId, Integer page) {
-        if (userId == null || page == null) return UnifiedResult.build("400", "参数错误", null);
+        if (userId == null || page == null) return UnifiedResult.build("400", "参数错误");
 
         User user = (User) session.getAttribute("user");
         Integer level;
@@ -226,7 +226,7 @@ public class ForumController {
      */
     @PostMapping("/list/reply")
     public UnifiedResult getUserReplyList(HttpSession session, Integer userId) {
-        if (userId == null) return UnifiedResult.build("400", "参数错误", null);
+        if (userId == null) return UnifiedResult.build("400", "参数错误");
 
         User user = (User) session.getAttribute("user");
 
