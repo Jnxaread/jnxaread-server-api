@@ -171,9 +171,7 @@ public class ForumController {
         if (userId == null || page == null) return UnifiedResult.build("400", "参数错误");
 
         User user = (User) session.getAttribute("user");
-        Integer level;
-        if (user == null) level = 0;
-        else level = user.getLevel();
+        int level = user == null ? 0 : user.getLevel();
 
         Map<String, Object> map = new HashMap<>();
         List<TopicWrap> topicWrapList = forumService.getTopicWrapList(userId, level, page, 45);
@@ -202,12 +200,9 @@ public class ForumController {
     @PostMapping("/list/topic/latest")
     public UnifiedResult getLatestTopicList(HttpSession session) {
         User user = (User) session.getAttribute("user");
-        Integer level;
-        if (user == null) {
-            level = 0;
-        } else {
-            level = user.getLevel();
-        }
+
+        int level = user == null ? 0 : user.getLevel();
+
         List<TopicWrap> topicWrapList = forumService.getTopicWrapList(0, level, 1, 3);
         ArrayList<TopicModel> topicModelList = new ArrayList<>();
         topicWrapList.forEach(topicWrap -> {
@@ -231,12 +226,7 @@ public class ForumController {
         User user = (User) session.getAttribute("user");
 
         //如果用户未登录，则用户等级为0，否则获取该用户的等级
-        Integer level;
-        if (user == null) {
-            level = 0;
-        } else {
-            level = user.getLevel();
-        }
+        int level = user == null ? 0 : user.getLevel();
 
         List<ReplyWrap> replyWrapList = forumService.getReplyWrapListByUserId(userId, level);
         List<ReplyModel> replyModelList = new ArrayList<>();

@@ -50,10 +50,8 @@ public class LibraryController {
         if (userId == null || page == null) return UnifiedResult.build("400", "参数错误");
 
         User user = (User) session.getAttribute("user");
-        Integer level;
-        if (user == null) {
-            level = 0;
-        } else {
+        Integer level = 0;
+        if (user != null) {
             if (user.getId().equals(userId)) {
                 level = userLevel.getLevelArr()[userLevel.getLevelArr().length - 1];
             } else {
@@ -113,12 +111,9 @@ public class LibraryController {
     @PostMapping("/list/fiction/latest")
     public UnifiedResult getLatestFictionList(HttpSession session) {
         User user = (User) session.getAttribute("user");
-        Integer level;
-        if (user == null) {
-            level = 0;
-        } else {
-            level = user.getLevel();
-        }
+
+        int level = user == null ? 0 : user.getLevel();
+
         List<FictionWrap> fictionWrapList = libraryService.getFictionWrapList(0, level, 1, 3);
         ArrayList<FictionModel> fictionModelList = new ArrayList<>();
         fictionWrapList.forEach(fictionWrap -> {
@@ -421,9 +416,7 @@ public class LibraryController {
         if (userId == null) return UnifiedResult.build("400", "参数错误");
 
         User user = (User) session.getAttribute("user");
-        Integer level;
-        if (user == null) level = 0;
-        else level = user.getLevel();
+        int level = user == null ? 0 : user.getLevel();
 
         List<CommentWrap> commentWrapList = libraryService.getCommentWrapListByUserId(userId, level);
         List<CommentModel> commentModelList = new ArrayList<>();
