@@ -29,6 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.jnxaread.constant.UnifiedCode.OLD_PASSWORD_INVALID;
+
 /**
  * 用户Controller
  * 用于处理用户相关的业务操作
@@ -309,7 +311,7 @@ public class UserController {
 
         String ciphertextOld = DigestUtils.md5DigestAsHex(oldPassword.getBytes());
         if (!user.getPassword().equals(ciphertextOld.toUpperCase())) {
-            return UnifiedResult.build("420", "密码错误");
+            return UnifiedResult.build(OLD_PASSWORD_INVALID.getCode(), OLD_PASSWORD_INVALID.getDescribe());
         }
 
         String ciphertextNew = DigestUtils.md5DigestAsHex(newPassword.getBytes());
