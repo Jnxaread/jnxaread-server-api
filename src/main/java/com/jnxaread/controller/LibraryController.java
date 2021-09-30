@@ -4,7 +4,7 @@ import com.jnxaread.bean.*;
 import com.jnxaread.bean.wrap.ChapterWrap;
 import com.jnxaread.bean.wrap.CommentWrap;
 import com.jnxaread.bean.wrap.FictionWrap;
-import com.jnxaread.entity.UnifiedResult;
+import com.jnxaread.common.UnifiedResult;
 import com.jnxaread.entity.UserLevel;
 import com.jnxaread.model.CategoryModel;
 import com.jnxaread.model.ChapterModel;

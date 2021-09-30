@@ -1,6 +1,6 @@
 package com.jnxaread.controller;
 
-import com.jnxaread.entity.UnifiedResult;
+import com.jnxaread.common.UnifiedResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

@@ -5,7 +5,7 @@ import com.jnxaread.bean.Topic;
 import com.jnxaread.bean.User;
 import com.jnxaread.bean.wrap.ReplyWrap;
 import com.jnxaread.bean.wrap.TopicWrap;
-import com.jnxaread.entity.UnifiedResult;
+import com.jnxaread.common.UnifiedResult;
 import com.jnxaread.model.ReplyModel;
 import com.jnxaread.model.TopicModel;
 import com.jnxaread.service.ForumService;
