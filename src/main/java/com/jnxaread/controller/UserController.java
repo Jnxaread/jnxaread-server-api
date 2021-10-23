@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.jnxaread.constant.UnifiedCode.OLD_PASSWORD_INVALID;
+import static com.jnxaread.constant.UnifiedCode.*;
 
 /**
  * 用户Controller
@@ -83,8 +83,8 @@ public class UserController {
 
         //先判断用户是否已经登录
         if (session.getAttribute("user") != null) {
-            String code = UnifiedCode.ALREADY_LOGGED_IN.getCode();
-            String desc = UnifiedCode.ALREADY_LOGGED_IN.getDescribe();
+            String code = ALREADY_LOGGED_IN.getCode();
+            String desc = ALREADY_LOGGED_IN.getDescribe();
             return UnifiedResult.build(code, desc);
         }
 
@@ -94,8 +94,8 @@ public class UserController {
         User user = userService.getUserByAccount(account);
         String ciphertext = DigestUtils.md5DigestAsHex(password.getBytes());
         if (user == null || !user.getPassword().equals(ciphertext.toUpperCase())) {
-            String code = UnifiedCode.ACCOUNT_OR_PASSWORD_INVALID.getCode();
-            String desc = UnifiedCode.ACCOUNT_OR_PASSWORD_INVALID.getDescribe();
+            String code = ACCOUNT_OR_PASSWORD_INVALID.getCode();
+            String desc = ACCOUNT_OR_PASSWORD_INVALID.getDescribe();
             return UnifiedResult.build(code, desc);
         }
         session.setAttribute("user", user);
