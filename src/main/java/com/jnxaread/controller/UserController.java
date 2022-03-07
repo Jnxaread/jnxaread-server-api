@@ -79,15 +79,6 @@ public class UserController {
      */
     @PostMapping("/login")
     public UnifiedResult login(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-
-        //先判断用户是否已经登录
-        if (session.getAttribute("user") != null) {
-            String code = ALREADY_LOGGED_IN.getCode();
-            String desc = ALREADY_LOGGED_IN.getDescribe();
-            return UnifiedResult.build(code, desc);
-        }
-
         String account = request.getParameter("account");
         String password = request.getParameter("password");
 
@@ -98,8 +89,7 @@ public class UserController {
             String desc = ACCOUNT_OR_PASSWORD_INVALID.getDescribe();
             return UnifiedResult.build(code, desc);
         }
-        session.setAttribute("user", user);
-
+        request.getSession().setAttribute("user", user);
 
         user.setLoginCount(user.getLoginCount() + 1);
         user.setGrade(user.getGrade() + userGrade.getLogin());
