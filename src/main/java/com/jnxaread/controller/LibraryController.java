@@ -154,10 +154,8 @@ public class LibraryController {
             chapterList = libraryService.getChapterList(fictionId, user.getId(), user.getLevel());
         }
         List<ChapterModel> chapterModelList = new ArrayList<>();
-        chapterList.forEach(chapter -> {
-            ChapterModel chapterModel = ModelUtil.getChapterModel(chapter);
-            chapterModelList.add(chapterModel);
-        });
+        chapterList.forEach(chapter ->
+                chapterModelList.add(ModelUtil.getChapterModel(chapter)));
         return UnifiedResult.ok(chapterModelList);
     }
 
@@ -367,8 +365,7 @@ public class LibraryController {
         if (!user.getId().equals(chapter.getUserId())) {
             return UnifiedResult.build("400", "参数错误");
         }
-        ChapterModel chapterModel = ModelUtil.getChapterModel(chapter);
-        return UnifiedResult.ok(chapterModel);
+        return UnifiedResult.ok(ModelUtil.getChapterModel(chapter));
     }
 
     /**
