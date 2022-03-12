@@ -9,19 +9,17 @@ import com.jnxaread.entity.UserGrade;
 import com.jnxaread.entity.UserLevel;
 import com.jnxaread.model.UserModel;
 import com.jnxaread.service.UserService;
+import com.jnxaread.util.MailUtil;
 import com.jnxaread.util.ModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
@@ -31,7 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.jnxaread.constant.UnifiedCode.*;
+import static com.jnxaread.constant.UnifiedCode.ACCOUNT_OR_PASSWORD_INVALID;
+import static com.jnxaread.constant.UnifiedCode.OLD_PASSWORD_INVALID;
 
 /**
  * 用户Controller
@@ -52,9 +51,6 @@ public class UserController {
 
     @Resource
     private UserLevel userLevel;
-
-    @Resource
-    private JavaMailSender javaMailSender;
 
     @Value("${spring.mail.username}")
     private String usernameOfSender;
@@ -235,15 +231,9 @@ public class UserController {
         // 发送邮箱验证码
         String content = "您的验证码为：" + code + "，此验证码十分钟内有效。";
         try {
-            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-            MimeMessageHelper message = new MimeMessageHelper(mimeMessage, false, "UTF-8");
-            message.setFrom(usernameOfSender, nicknameOfSender);
-            message.setTo(email);
-            message.setSubject("用户注册验证码");
-            message.setText(content);
-            javaMailSender.send(mimeMessage);
+            MailUtil.send(usernameOfSender, nicknameOfSender, email, "用户注册验证码", content);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             String status = UnifiedCode.EMAIL_SENT_FAILED.getCode();
             String desc = UnifiedCode.EMAIL_SENT_FAILED.getDescribe();
             return UnifiedResult.build(status, desc);
