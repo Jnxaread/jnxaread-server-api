@@ -42,19 +42,16 @@ import static com.jnxaread.constant.UnifiedCode.OLD_PASSWORD_INVALID;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
     @Resource
     private UserService userService;
-
     @Resource
     private UserGrade userGrade;
-
     @Resource
     private UserLevel userLevel;
-
+    @Resource
+    private MailUtil mailUtil;
     @Value("${spring.mail.username}")
     private String usernameOfSender;
-
     @Value("${spring.mail.nickname}")
     private String nicknameOfSender;
 
@@ -231,7 +228,7 @@ public class UserController {
         // 发送邮箱验证码
         String content = "您的验证码为：" + code + "，此验证码十分钟内有效。";
         try {
-            MailUtil.send(usernameOfSender, nicknameOfSender, email, "用户注册验证码", content);
+            mailUtil.send(usernameOfSender, nicknameOfSender, email, "用户注册验证码", content);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             String status = UnifiedCode.EMAIL_SENT_FAILED.getCode();
