@@ -80,7 +80,8 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!--日志文件输出的文件名,可设置文件类型为gz,开启文件压缩-->
             <!-- %d{yyyy-MM,aux}，aux为目录辅助标识；%i表示当前为当天第i个日志 -->
-            <FileNamePattern>${LOG_HOME}/access/natural/%d{yyyy-MM,aux}/access.%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>
+            <FileNamePattern>${LOG_HOME}/access/natural/%d{yyyy-MM,aux}/access.%d{yyyy-MM-dd}.%i.log.gz
+            </FileNamePattern>
             <!--日志文件保留天数-->
             <MaxHistory>90</MaxHistory>
             <!--按大小分割同一天的-->
@@ -103,7 +104,8 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!--日志文件输出的文件名,可设置文件类型为gz,开启文件压缩-->
             <!-- %d{yyyy-MM,aux}，aux为目录辅助标识；%i表示当前为当天第i个日志 -->
-            <FileNamePattern>${LOG_HOME}/access/vicious/%d{yyyy-MM,aux}/vicious_ip.%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>
+            <FileNamePattern>${LOG_HOME}/access/vicious/%d{yyyy-MM,aux}/vicious_ip.%d{yyyy-MM-dd}.%i.log.gz
+            </FileNamePattern>
             <!--日志文件保留天数-->
             <MaxHistory>90</MaxHistory>
             <!--按大小分割同一天的-->
@@ -132,7 +134,8 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!--日志文件输出的文件名,可设置文件类型为gz,开启文件压缩-->
             <!-- %d{yyyy-MM,aux}，aux为目录辅助标识；%i表示当前为当天第i个日志 -->
-            <FileNamePattern>${LOG_HOME}/access/limited/%d{yyyy-MM,aux}/limited_ip.%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>
+            <FileNamePattern>${LOG_HOME}/access/limited/%d{yyyy-MM,aux}/limited_ip.%d{yyyy-MM-dd}.%i.log.gz
+            </FileNamePattern>
             <!--日志文件保留天数-->
             <MaxHistory>90</MaxHistory>
             <!--按大小分割同一天的-->
@@ -169,29 +172,6 @@
         </rollingPolicy>
     </appender>
 
-    <!-- 数据库备份记录日志输出 -->
-    <appender name="BACKUP_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--日志名,指定最新的文件名，其他文件名使用FileNamePattern -->
-        <File>${LOG_HOME}/backup/backup.log</File>
-        <!--输出格式-->
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
-            <!--设置编码-->
-            <charset>UTF-8</charset>
-        </encoder>
-        <!--文件滚动模式-->
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <!--日志文件输出的文件名,可设置文件类型为gz,开启文件压缩-->
-            <!-- %d{yyyy-MM,aux}，aux为目录辅助标识；%i表示当前为当天第i个日志 -->
-            <FileNamePattern>${LOG_HOME}/backup/%d{yyyy-MM,aux}/backup.%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>
-            <!--日志文件保留天数-->
-            <MaxHistory>30</MaxHistory>
-            <!--按大小分割同一天的-->
-            <maxFileSize>8MB</maxFileSize>
-        </rollingPolicy>
-    </appender>
-
     <!-- 用户访问logger -->
     <logger name="access" level="INFO" additivity="false">
         <appender-ref ref="ACCESS_NATURAL"/>
@@ -202,11 +182,6 @@
     <!-- 用户登录logger -->
     <logger name="login" level="INFO" additivity="false">
         <appender-ref ref="LOGIN_LOG"/>
-    </logger>
-
-    <!-- 数据库备份logger -->
-    <logger name="backup" level="INFO" additivity="false">
-        <appender-ref ref="BACKUP_LOG"/>
     </logger>
 
     <!--指定基础的日志输出级别-->
