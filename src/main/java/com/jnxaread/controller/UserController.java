@@ -228,7 +228,7 @@ public class UserController {
         // 发送邮箱验证码
         String content = "您的验证码为：" + code + "，此验证码十分钟内有效。";
         try {
-            mailUtil.send(usernameOfSender, nicknameOfSender, email, "用户注册验证码", content);
+            mailUtil.send(email, "用户注册验证码", content);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             String status = UnifiedCode.EMAIL_SENT_FAILED.getCode();
