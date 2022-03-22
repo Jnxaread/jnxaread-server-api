@@ -174,7 +174,7 @@ public class ForumController {
         int level = user == null ? 0 : user.getLevel();
 
         Map<String, Object> map = new HashMap<>();
-        List<TopicWrap> topicWrapList = forumService.getTopicWrapList(userId, level, page, 45);
+        List<TopicWrap> topicWrapList = forumService.getTopicWrapList(userId, level, 1, page, 45);
 
         /*
             将包装类中的一部分属性封装到响应实体模型中返回
@@ -203,7 +203,7 @@ public class ForumController {
 
         int level = user == null ? 0 : user.getLevel();
 
-        List<TopicWrap> topicWrapList = forumService.getTopicWrapList(0, level, 1, 3);
+        List<TopicWrap> topicWrapList = forumService.getTopicWrapList(0, level, 1, 1, 3);
         ArrayList<TopicModel> topicModelList = new ArrayList<>();
         topicWrapList.forEach(topicWrap -> {
             TopicModel topicModel = ModelUtil.getTopicModel(topicWrap);
