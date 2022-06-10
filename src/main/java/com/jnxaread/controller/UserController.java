@@ -13,7 +13,6 @@ import com.jnxaread.util.MailUtil;
 import com.jnxaread.util.ModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,10 +49,6 @@ public class UserController {
     private UserLevel userLevel;
     @Resource
     private MailUtil mailUtil;
-    @Value("${spring.mail.username}")
-    private String usernameOfSender;
-    @Value("${spring.mail.nickname}")
-    private String nicknameOfSender;
 
     private final Logger logger = LoggerFactory.getLogger("login");
 
