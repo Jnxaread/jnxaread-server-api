@@ -426,6 +426,7 @@ public class LibraryController {
 
     /**
      * 修改章节接口
+     * 这里有个bug，用户编辑了章节之后没有重新计算章节字数
      *
      * @param session       请求的session
      * @param editedChapter 被更新过的章节数据
